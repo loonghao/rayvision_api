@@ -8,4 +8,4 @@ taskUserLevel:
   required: True
   type: integer
 outUserId:
-  type:
+  type: integer
