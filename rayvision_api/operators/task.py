@@ -1,5 +1,7 @@
 """Interface to operate on the task."""
 
+from rayvision_api.exception import RayvisionError
+
 
 class TaskOperator(object):
     """API task related operations."""
@@ -7,23 +9,33 @@ class TaskOperator(object):
     TASK_PARAM = "taskIds"
 
     def __init__(self, connect):
-        """Initialize instance."""
-        self._connect = connect
+        """Initialize instance.
 
-    def create_task(self, count=1, out_user_id=None, task_user_level=50,
-                    labels=None):
-        """Create task ID.
+        Args:
+            connect (rayvision_api.api.connect.Connect): The connect instance.
+
+        """
+        self._connect = connect
+        self._has_submit = False
+        self._task_id = None
+
+    def _create_task(self,
+                     count=1,
+                     task_user_level=50,
+                     out_user_id=None,
+                     labels=None):
+        """Create a task ID.
 
         Args:
             count (int, optional): The quantity of task ID.
-            out_user_id (int, optional): Non-required, external user ID, used
-                to distinguish users accessing third parties.
             task_user_level (int): Set the user's task level to either 50 or
                 60, default is 50.
-            labels (list or tuple): Custom task labels, optional.
+            out_user_id (int, optional): Non-required, external user ID, used
+                to distinguish users accessing third parties.
+            labels (list or tuple, optional): Custom task labels.
 
         Returns:
-            dict: Task info.
+            dict: The information of the task.
                 e.g.:
                     {
                         "taskIdList": [1658434],
@@ -42,9 +54,40 @@ class TaskOperator(object):
             data['labels'] = labels
         return self._connect.post(self._connect.url.createTask, data)
 
-    def submit_task(self, task_id, asset_lsolation_model=None,
-                    out_user_id=None):
-        """Submit task.
+    def _generate_task_id(self):
+        """Get task id.
+
+        Example::
+
+            task_id_info = {
+                    "taskIdList": [1658434],
+                    "aliasTaskIdList": [2W1658434],
+                    "userId": 100093088
+                }
+
+        Returns:
+            int: The ID number of the task.
+
+        """
+        if not self._has_submit and self._task_id:
+            return self._task_id
+        task_id_info = self._create_task(count=1, out_user_id=None)
+        task_id_list = task_id_info.get("taskIdList")
+        if not task_id_list:
+            raise RayvisionError(1000000, 'Failed to create task number!')
+        self._task_id = task_id_list[0]
+        self._has_submit = False
+        return self._task_id
+
+    @property
+    def task_id(self):
+        return self._generate_task_id()
+
+    def submit_task(self,
+                    asset_lsolation_model=None,
+                    out_user_id=None,
+                    only_id=False):
+        """Submit a task to rayvision render farm.
 
         Args:
             task_id (int): Submit task ID.
@@ -55,14 +98,18 @@ class TaskOperator(object):
 
         """
         data = {
-            "taskId": task_id
+            "taskId": self.task_id
         }
         if asset_lsolation_model:
             data["assetIsolationModel"] = asset_lsolation_model
         if out_user_id:
             data["outUserId"] = out_user_id.strip()
 
-        return self._connect.post(self._connect.url.submitTask, data)
+        task_info = self._connect.post(self._connect.url.submitTask, data)
+        if only_id:
+            return self.task_id
+        self._has_submit = True
+        return task_info
 
     def stop_task(self, task_param_list):
         """Stop the task.
