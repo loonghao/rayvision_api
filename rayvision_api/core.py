@@ -2,14 +2,13 @@
 
 import logging
 import os
-from future.moves.urllib.error import HTTPError
 import json
 from rayvision_log import init_logger
 
 from rayvision_api.connect import Connect
 from rayvision_api.exception import RayvisionError
 from rayvision_api.operators import QueryOperator
-from rayvision_api.operators import RenderEnv
+from rayvision_api.operators import RenderEnvOperator
 from rayvision_api.operators import TagOperator
 from rayvision_api.operators import TaskOperator
 from rayvision_api.operators import UserOperator
@@ -70,8 +69,7 @@ class RayvisionAPI(object):
         self.task = TaskOperator(self._connect)
         self.query = QueryOperator(self._connect)
         self.tag = TagOperator(self._connect)
-        self.env = RenderEnv(self._connect)
-        self.project = TagOperator(self._connect)
+        self.env = RenderEnvOperator(self._connect)
 
     @property
     def user_info(self):
@@ -81,28 +79,6 @@ class RayvisionAPI(object):
     def connect(self):
         """rayvision.api.Connect: The current connect instance."""
         return self._connect
-
-    def _get_task_id(self):
-        """Get task id.
-
-        Example::
-
-            task_id_info = {
-                    "taskIdList": [1658434],
-                    "aliasTaskIdList": [2W1658434],
-                    "userId": 100093088
-                }
-
-        Returns:
-            int: The ID number of the task.
-
-        """
-        task_id_info = self.task.create_task(count=1, out_user_id=None)
-        task_id_list = task_id_info.get("taskIdList")
-        if not task_id_list:
-            raise RayvisionError(1000000, 'Failed to create task number!')
-        task_id = task_id_list[0]
-        return task_id
 
     def get_user_id(self):
         """Get user id.
@@ -170,7 +146,7 @@ class RayvisionAPI(object):
 
         return project_id
 
-    def submit(self, task_info):
+    def submit(self, task_info, only_id=True):
         """Submit a task.
 
         Args:
@@ -178,7 +154,4 @@ class RayvisionAPI(object):
 
         """
         task_info = json.dumps(task_info)
-
-        task_id = self._get_task_id()
-        self.task.submit_task(task_id)
-        return task_id
+        return self.task.submit_task(only_id=True)

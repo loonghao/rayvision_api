@@ -14,7 +14,8 @@ from rayvision_api.constants import HEADERS
 from rayvision_api.exception import RayvisionAPIError
 from rayvision_api import signature
 from rayvision_api.validator import validate_data
-from rayvision_api.url import URL
+from rayvision_api.url import ApiUrl
+from rayvision_api.url import assemble_api_url
 
 
 class Connect(object):
@@ -33,7 +34,7 @@ class Connect(object):
 
         """
         self.logger = logging.getLogger(__name__)
-        self.url = URL
+        self.url = ApiUrl
         self.domain = domain
         self.platform = platform
         self._access_key = access_key
@@ -50,11 +51,6 @@ class Connect(object):
     def headers(self):
         """Get request headers dic."""
         return self._headers
-
-    @staticmethod
-    def assemble_api_url(domain, operators, protocol='https'):
-        """Assemble the requests api url."""
-        return '{}://{}{}'.format(protocol, domain, operators)
 
     @retry(reraise=True, stop=stop_after_attempt(5),
            wait=wait_random(min=1, max=2))
@@ -83,25 +79,20 @@ class Connect(object):
 
         """
         data = data or {}
-
-        # if isinstance(api_url, URL):
-        #     schema_name = api_url.name
-        # else:
         schema_name = api_url.split("/")[-1]
-
         if validator:
             data = validate_data(data, schema_name)
-        url = self.assemble_api_url(self.domain, api_url,
-                                    protocol=self._protocol)
+        request_address = assemble_api_url(self.domain, api_url,
+                                           protocol=self._protocol)
         headers = self._handle_headers(api_url, data)
         data = json.dumps(data)
-        self.logger.debug('POST: %s', url)
+        self.logger.debug('POST: %s', request_address)
         self.logger.debug('HTTP Headers: %s', pformat(headers))
         self.logger.debug('HTTP Body: %s', data)
-        response = requests.post(url, data, headers=headers)
+        response = requests.post(request_address, data, headers=headers)
         json_response = response.json()
         self.logger.debug('HTTP Response: %s', json_response)
-        code = json_response['code']
+        code = json_response["code"]
         if code != 200:
             raise RayvisionAPIError(code, json_response['message'],
                                     response.url)

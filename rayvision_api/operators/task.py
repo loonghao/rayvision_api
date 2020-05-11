@@ -1,4 +1,8 @@
-"""Interface to operate on the task."""
+"""Interface to operate on the task.
+
+
+
+"""
 
 from rayvision_api.exception import RayvisionError
 
@@ -81,6 +85,14 @@ class TaskOperator(object):
 
     @property
     def task_id(self):
+        """int: The ID number of the render task.
+
+        Notes:
+            As long as we do not initialize the class again or submit the task
+            successfully, we can always continue to get the task id from the
+            class instance.
+
+        """
         return self._generate_task_id()
 
     def submit_task(self,
@@ -94,7 +106,8 @@ class TaskOperator(object):
             asset_lsolation_model (str): Asset isolation type, Optional value,
                 default is null, optional value:'TASK_ID_MODEL' or 'OUT_USER_MODEL'.
             out_user_id (str): The asset isolates the user ID, Optional value,
-                when asset_lsolation_model='OUT_USER_MODEL' ,'out_user_id' cant be empty.
+                when asset_lsolation_model='OUT_USER_MODEL' ,'out_user_id'
+                cant be empty.
 
         """
         data = {
@@ -151,17 +164,17 @@ class TaskOperator(object):
         return self._connect.post(self._connect.url.deleteTask,
                                   {self.TASK_PARAM: task_param_list})
 
-    def update_task_level(self, task_id, task_level):
-        """Update the level of the task in the render.
+    def update_priority(self, task_id, priority):
+        """Update the render priority for the task by given task id.
 
         Args:
-            task_id (int): Task id.
-            task_level (int): Task level.
+            task_id (int): The ID number of the render task.
+            priority (int): The priority for the current render task.
 
         """
         data = {
             'taskId': task_id,
-            'taskUserLevel': task_level,
+            'taskUserLevel': priority,
         }
         return self._connect.post(self._connect.url.updateTaskUserLevel, data)
 

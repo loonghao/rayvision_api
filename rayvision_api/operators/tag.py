@@ -5,7 +5,12 @@ class TagOperator(object):
     """Task tag settings."""
 
     def __init__(self, connect):
-        """Initialize instance."""
+        """Initialize instance.
+
+        Args:
+            connect (rayvision_api.api.connect.Connect): The connect instance.
+
+        """
         self._connect = connect
 
     def add_label(self, new_name, status=1):

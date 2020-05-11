@@ -123,8 +123,8 @@ class RayvisionTask(object):
         Returns: str
 
         """
-        task_id_info = Task(self.connect).create_task(count=1,
-                                                      out_user_id=None)
+        task_id_info = Task(self.connect)._create_task(count=1,
+                                                       out_user_id=None)
         task_id = task_id_info.get('taskIdList', [''])[0]
         if task_id == '':
             # Task ID creating failed

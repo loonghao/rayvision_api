@@ -3,7 +3,7 @@
 # pylint: disable=import-error
 import pytest
 
-from rayvision_api.api import signature
+from rayvision_api import signature
 
 
 def test_generate_nonce():

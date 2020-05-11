@@ -3,8 +3,8 @@
 # pylint: disable=import-error
 import pytest
 
-from rayvision_api.api import RayvisionAPIError
-from rayvision_api.api import QueryOperator
+from rayvision_api.exception import RayvisionAPIError
+from rayvision_api.operators import QueryOperator
 
 
 @pytest.fixture()

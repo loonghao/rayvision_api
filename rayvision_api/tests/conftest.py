@@ -93,7 +93,7 @@ def render_env():
 @pytest.fixture()
 def rayvision_connect(user_info_dict):
     """Create connect API object."""
-    from rayvision_api.api import Connect
+    from rayvision_api.connect import Connect
     user_info_dict['headers'] = {'version': 'dev'}
     return Connect(**user_info_dict)
 
@@ -102,7 +102,7 @@ def rayvision_connect(user_info_dict):
 def task(task_info, mocker):
     """Create an RayvisionTask object."""
     from rayvision_api.task.handle import RayvisionTask
-    mocker_task_id = mocker.patch.object(RayvisionTask, '_get_task_id')
+    mocker_task_id = mocker.patch.object(RayvisionTask, '_generate_task_id')
     mocker_task_id.return_value = '159753'
     mocker_user_id = mocker.patch.object(RayvisionTask, 'get_user_id')
     mocker_user_id.return_value = '5282582'

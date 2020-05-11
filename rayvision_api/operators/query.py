@@ -12,7 +12,7 @@ class QueryOperator(object):
         """Initialize instance.
 
         Args:
-            rayvision_api.api.connect.Connect: The connection instance.
+            connect (rayvision_api.api.connect.Connect): The connect instance.
 
         """
         self._connect = connect
@@ -399,7 +399,8 @@ class QueryOperator(object):
                     }
 
         """
-        return self._connect.post(URL.getRaySyncUserKey, validator=False)
+        return self._connect.post(self._connect.url.getRaySyncUserKey,
+                                  validator=False)
 
     def get_task_processing_img(self, task_id, frame_type=None):
         """Get the task progress diagram,currently only Max software is supported.

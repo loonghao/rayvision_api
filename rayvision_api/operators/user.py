@@ -1,13 +1,15 @@
 """Interface to operate the user."""
 
 import platform
+from future.moves.urllib.error import HTTPError
+from rayvision_api.exception import RayvisionError
 from rayvision_api.signature import hump2underline
 
 
 class UserOperator(object):
-    """API user information operation."""
+    """API user information operator."""
 
-    def __init__(self, connect, login=True):
+    def __init__(self, connect):
         """Initialize instance.
 
         Args:
@@ -18,8 +20,10 @@ class UserOperator(object):
         self._info = {'local_os': platform.system().lower(),
                       'domain': connect.domain,
                       'platform': connect.platform}
-        if login:
+        try:
             self._login()
+        except HTTPError:
+            raise RayvisionError(20020, 'Login failed.')
 
     @property
     def info(self):
@@ -111,12 +115,6 @@ class UserOperator(object):
         """
         return self._connect.post(self._connect.url.getTransferBid,
                                   validator=False)
-
-        try:
-            self._login()
-        except HTTPError:
-            self.logger.error('Login failed.')
-            raise RayvisionError(20020, 'Login failed.')
 
     def _login(self):
         """Supplement user's configuration information.

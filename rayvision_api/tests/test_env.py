@@ -4,14 +4,14 @@
 import pytest
 
 from rayvision_api.exception import RayvisionAPIError
-from rayvision_api.operators import RenderEnv
+from rayvision_api.operators import RenderEnvOperator
 
 
 # pylint: disable=redefined-outer-name
 @pytest.fixture()
 def fixture_env(rayvision_connect):
     """Initialize the user object."""
-    return RenderEnv(rayvision_connect)
+    return RenderEnvOperator(rayvision_connect)
 
 
 def test_add_render_env(fixture_env, render_env, mock_requests):

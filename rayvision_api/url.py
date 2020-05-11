@@ -6,7 +6,7 @@ def assemble_api_url(domain, operators, protocol='https'):
     return '{}://{}{}'.format(protocol, domain, operators)
 
 
-class URL(str, Enum):
+class ApiUrl(str, Enum):
     queryPlatforms = '/api/render/common/queryPlatforms'
     queryUserProfile = '/api/render/user/queryUserProfile'
     queryUserSetting = '/api/render/user/queryUserSetting'

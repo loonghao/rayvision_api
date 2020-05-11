@@ -3,11 +3,16 @@
 from rayvision_api import constants
 
 
-class RenderEnv(object):
-    """Rendering environment configuration."""
+class RenderEnvOperator(object):
+    """The rendering environment configuration."""
 
     def __init__(self, connect):
-        """Initialize instance."""
+        """Initialize instance.
+
+        Args:
+            connect (rayvision_api.api.connect.Connect): The connect instance.
+
+        """
         self._connect = connect
 
     def add_render_env(self, data):
