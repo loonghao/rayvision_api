@@ -4,6 +4,7 @@ import copy
 import json
 import logging
 from pprint import pformat
+import platform
 import time
 
 import requests
@@ -21,7 +22,7 @@ from rayvision_api.url import assemble_api_url
 class Connect(object):
     """Connect operation with the server, request."""
 
-    def __init__(self, access_id, access_key, protocol, domain, platform,
+    def __init__(self, access_id, access_key, protocol, domain, render_platform,
                  headers=None):
         """Connect parameter initialization.
 
@@ -29,14 +30,15 @@ class Connect(object):
             access_id (str): The access id of API.
             access_key (str): The access key of the API.
             domain (str, optional): The domain address of the API.
-            platform (str, optional): The platform of renderFarm.
+            render_platform (str, optional): The platform of renderFarm.
             protocol (str, optional): The requests protocol.
 
         """
         self.logger = logging.getLogger(__name__)
         self.url = ApiUrl
         self.domain = domain
-        self.platform = platform
+        self.render_platform = render_platform
+        self.system_platform = platform.system().lower()
         self._access_key = access_key
         # Example: https://task.renderbus.com
         self._protocol = protocol
@@ -45,7 +47,7 @@ class Connect(object):
             HEADERS.update(headers)
         self._headers = HEADERS
         self._headers['accessId'] = access_id
-        self._headers['platform'] = self.platform
+        self._headers['platform'] = self.render_platform
 
     @property
     def headers(self):

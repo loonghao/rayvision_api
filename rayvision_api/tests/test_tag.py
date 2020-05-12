@@ -4,13 +4,13 @@
 import pytest
 
 from rayvision_api.exception import RayvisionAPIError
-from rayvision_api.operators import TagOperator
+from rayvision_api.operators import ProjectOperator
 
 
 @pytest.fixture()
 def fixture_tag(rayvision_connect):
     """Get a Tag object."""
-    return TagOperator(rayvision_connect)
+    return ProjectOperator(rayvision_connect)
 
 
 # pylint: disable=redefined-outer-name
@@ -25,7 +25,7 @@ def test_add_label(fixture_tag, mock_requests):
     with pytest.raises(RayvisionAPIError) as err:
         new_name = "afas"
         status = 0
-        fixture_tag.add_label(new_name, status)
+        fixture_tag.add(new_name, status)
     assert 'Add lable failed.' in str(err.value)
 
 
@@ -39,7 +39,7 @@ def test_delete_label(fixture_tag, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         del_name = "dsfdfa"
-        fixture_tag.delete_label(del_name)
+        fixture_tag.delete(del_name)
     assert 'Delete lable failed.' in str(err.value)
 
 
@@ -53,5 +53,5 @@ def test_get_project_list(fixture_tag, mock_requests):
               }
          ]}}
     )
-    assert fixture_tag.get_project_list()[0]['projectId'] == 3671
-    assert fixture_tag.get_project_list()[0]['projectName'] == 'myLabel'
+    assert fixture_tag.get_projects()[0]['projectId'] == 3671
+    assert fixture_tag.get_projects()[0]['projectName'] == 'myLabel'

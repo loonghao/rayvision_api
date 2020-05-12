@@ -58,7 +58,7 @@ def header():
 
 @pytest.fixture()
 def task_info(tmpdir):
-    """Get user info."""
+    """Get user profile."""
     return {
         "domain": "task.renderbus.com",
         "platform": "2",

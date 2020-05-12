@@ -1,41 +1,52 @@
-"""Initialize user, task, query, environment, tag interface."""
+"""A Python-based API for Using Renderbus cloud rendering service."""
 
 import logging
 import os
-import json
 from rayvision_log import init_logger
 
 from rayvision_api.connect import Connect
-from rayvision_api.exception import RayvisionError
-from rayvision_api.operators import QueryOperator
 from rayvision_api.operators import RenderEnvOperator
-from rayvision_api.operators import TagOperator
-from rayvision_api.operators import TaskOperator
+from rayvision_api.operators import ProjectOperator
+from rayvision_api.operators import JobOperator
 from rayvision_api.operators import UserOperator
 from rayvision_api.constants import PACKAGE_NAME
+from rayvision_api.constants import DCC_ID_MAPPINGS
 
 
 class RayvisionAPI(object):
-    """Create the request object.
+    """A Python-based API for Using Renderbus cloud rendering service.
 
-    Including user action, task action, query action, environment operation
-    and tag action.
+    Examples:
+        .. code-block:: python
+
+            >>> from rayvision_api import RayvisionAPI
+            >>> api_access_id = "xxxxxx"
+            >>> api_access_key = "xxxxx"
+            >>> ray = RayvisionAPI(access_id=api_access_id,
+            ...                    access_key=api_access_key)
+            # Print current user profiles.
+            >>> print(ray.user_operator)
+            # Access profile settings or info like a object.
+            >>> print(ray.user_operator.user_name)
+            >>> print(ray.user_operator.email)
+            >>> print(ray.user_operator.user_id)
+
     """
 
     def __init__(self,
                  access_id=None,
                  access_key=None,
                  domain='task.renderbus.com',
-                 platform='4',
+                 render_platform='4',
                  protocol='https',
                  logger=None):
-        """Please note that this is API parameter initialization.
+        """Initialize the Rayvision API instance.
 
         Args:
             access_id (str, optional): The access id of API.
             access_key (str, optional): The access key of the API.
             domain (str, optional): The domain address of the API.
-            platform (str, optional): The platform of renderFarm.
+            render_platform (str, optional): The platform of renderFarm.
             protocol (str, optional): The requests protocol.
             logger (logging.Logger, optional): The logging logger instance.
 
@@ -62,89 +73,106 @@ class RayvisionAPI(object):
                                 access_key,
                                 protocol,
                                 domain,
-                                platform)
+                                render_platform)
 
         # Initial all api instance.
-        self.user = UserOperator(self._connect)
-        self.task = TaskOperator(self._connect)
-        self.query = QueryOperator(self._connect)
-        self.tag = TagOperator(self._connect)
-        self.env = RenderEnvOperator(self._connect)
-
-    @property
-    def user_info(self):
-        return self.user.info
+        self.user_operator = UserOperator(self._connect)
+        self.job_operator = JobOperator(self._connect)
+        self.project_operator = ProjectOperator(self._connect)
+        self.render_env_operator = RenderEnvOperator(self._connect)
 
     @property
     def connect(self):
         """rayvision.api.Connect: The current connect instance."""
         return self._connect
 
-    def get_user_id(self):
-        """Get user id.
+    @property
+    def render_platforms(self):
+        """Get the currently available rendering platform.
 
-        Example:
-            user_profile_info = {
-                "userId": 10001136,
-                "userName": "rayvision",
-                "platform": 2,
-                "phone": "173333333333",
-                "email": "",
-                "company": "",
-                "name": "",
-                "job": "",
-                "communicationNumber": "",
-                "softType": 2000,
-                "softStatus": 1,
-                "businessType": 1,
-                "status": 1,
-                "infoStatus": 0,
-                "accountType": 1,
-            }
         Returns:
-            int: The ID number of the current user.
+            list of dict: Platforms profile.
+                e.g.:
+                     [
+                         {
+                             "platform": 2,
+                             "name": "query_platform_w2"
+                         },
+                     ]
 
         """
-        try:
-            return self.user.user_id
-        except KeyError:
-            raise RayvisionError(1000000, 'Failed to get user number!')
+        zone = 1 if "renderbus" in self._connect.domain.lower() else 2
+        return self._connect.post(self._connect.url.queryPlatforms,
+                                  {'zone': zone})
 
-    def check_and_add_project_name(self, project_name):
-        """Get the tag id.
+    @property
+    def supported_software(self):
+        """Get supported rendering software.
 
-        Call the API interface to obtain all the label information of the
-        user, determine whether the label name to be added already exists,
-        and obtain the label id if it exists. If the label does not exist,
-        the API interface is repeatedly requested. The request is up to three
-        times. If the third time does not exist, the empty string is returned.
+        Returns:
+            dict: Software profile.
+                e.g.:
+                    {
+                        "isAutoCommit": 2,
+                        "renderInfoList": [
+                            {
+                                "cgId": 2000,
+                                "cgName": "Maya",
+                                "cgType": "ma;mb",
+                                "iconPath": "/img/softimage/maya.png",
+                                "isNeedProjectPath": 3,
+                                "isNeedAnalyse": 1,
+                                "isSupportLinux": 1
+                            }
+                        ],
+                        "defaultCgId": 2001
+                    }
+
+        """
+        return self._connect.post(self._connect.url.querySupportedSoftware,
+                                  validator=False)
+
+    @property
+    def supported_plugin(self, name):
+        """Get supported rendering software plugins.
 
         Args:
-            project_name (str): The name of the tag to be added.
+            name (str): The name of the DCC.
+                e.g.:
+                    maya,
+                    houdini
 
         Returns:
-            int: Tag id.
+            dict: Plugin profile.
+                e.g.:
+                    {
+                        "cgPlugin": [
+                            {
+                                "cvId": 19,
+                                "pluginName": "zblur",
+                                "pluginVersions": [
+                                    {
+                                        "pluginId": 1652,
+                                        "pluginName": "zblur",
+                                        "pluginVersion": "zblur 2.02.019"
+                                    }
+                                ]
+                            },
+                        ],
+                        "cgVersion": [
+                            {
+                                "id": 23,
+                                "cgId": 2005,
+                                "cgName": "CINEMA 4D",
+                                "cgVersion": "R19"
+                            }
+                        ]
+                    }
 
         """
-        is_label_exist = False
-        project_id = ''
-        for _ in range(2):
-            label_dict_list = (self.tag.get_label_list().
-                               get('projectNameList', []))
-            for label_dict in label_dict_list:
-                if label_dict['projectName'] == project_name:
-                    is_label_exist = True
-                    project_id = str(label_dict['projectId'])
-                    break
-            # Add a label if the no label exists.
-            if not is_label_exist:
-                self.tag.add_label(project_name, '0')
-            else:
-                if project_id == '':
-                    continue
-                break
-
-        return project_id
+        cg_id = DCC_ID_MAPPINGS[name.strip().lower()]
+        data = {'cgId': cg_id, 'osName': self.connect.system_platform}
+        return self._connect.post(self._connect.url.querySupportedPlugin, data)
 
     def submit(self, task_info, only_id=True):
         """Submit a task.
@@ -153,5 +181,4 @@ class RayvisionAPI(object):
             task_info (dict): Task id.
 
         """
-        task_info = json.dumps(task_info)
-        return self.task.submit_task(only_id=True)
+        return self.job_operator.submit_task(task_info)

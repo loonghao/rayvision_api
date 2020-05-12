@@ -1,6 +1,5 @@
 """Interface to operate the user."""
-
-import platform
+from pprint import pformat
 from future.moves.urllib.error import HTTPError
 from rayvision_api.exception import RayvisionError
 from rayvision_api.signature import hump2underline
@@ -13,20 +12,22 @@ class UserOperator(object):
         """Initialize instance.
 
         Args:
-            connect (rayvision_api.api.connect.Connect): The connect instance.
+            connect (rayvision_api.connect.Connect): The connect instance.
 
         """
         self._connect = connect
-        self._info = {'local_os': platform.system().lower(),
-                      'domain': connect.domain,
-                      'platform': connect.platform}
+        self._info = {
+            "local_os": self._connect.system_platform,
+            "domain": connect.domain,
+            "platform": connect.render_platform,
+        }
         try:
             self._login()
         except HTTPError:
-            raise RayvisionError(20020, 'Login failed.')
+            raise RayvisionError(20020, "Login failed.")
 
     @property
-    def info(self):
+    def profile(self):
         return self._info
 
     @property
@@ -37,7 +38,7 @@ class UserOperator(object):
         """Get user profile.
 
         Returns:
-            dict: User profile info.
+            dict: User profile profile.
                 e.g.:
                     {
                         "userId": 10001136,
@@ -104,7 +105,7 @@ class UserOperator(object):
         """Get user transfer BID.
 
         Returns:
-            dict: Transfer bid info.
+            dict: Transfer bid profile.
                 e.g.:
                     {
                         "config_bid": "30201",
@@ -175,3 +176,64 @@ class UserOperator(object):
             key_underline = hump2underline(key)
             if key_underline != "platform":
                 self._info[key_underline] = value
+
+    def get_transfer_server_msg(self):
+        """Get the user rendering environment configuration.
+
+        Returns:
+            dict: Connect raysync information.
+                Example:
+                    {
+                        'raysyncTransfer': {
+                            'port': 2542,
+                            'proxyIp': 'render.raysync.cn',
+                            'proxyPort': 32011,
+                            'serverIp': '127.0.0.1',
+                            'serverPort': 2121,
+                            'sslPort': 2543
+                        }
+                    }
+
+        """
+        zone = 1 if "renderbus" not in self._connect.domain else 2
+        data = {
+            "zone": zone
+        }
+        return self._connect.post(self._connect.url.getTransferServerMsg, data)
+
+    def get_raysync_user_key(self):
+        """Get the user rendering environment configuration.
+
+        Returns:
+            dict: User login raysync information.
+                Example:
+                    {
+                        'raySyncUserKey': '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d',
+                        'userName': 'test',
+                        'platform': 2,
+                    }
+
+        """
+        return self._connect.post(self._connect.url.getRaySyncUserKey,
+                                  validator=False)
+
+    def __str__(self):
+        return pformat(self.profile)
+
+    @property
+    def id(self):
+        return self.profile["user_id"]
+
+    def __getattribute__(self, attribute):
+        """Get an attribute's value and perform deferred loading once."""
+        _getattr = super(UserOperator, self).__getattribute__
+        try:
+            value = _getattr(attribute)
+        except AttributeError:
+            try:
+                value = self.profile[attribute]
+            except KeyError as err:
+                raise AttributeError("UserOperator"
+                                     " object has no attribute "
+                                     "'{}'".format(attribute))
+        return value

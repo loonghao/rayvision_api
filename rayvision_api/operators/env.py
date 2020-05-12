@@ -10,7 +10,7 @@ class RenderEnvOperator(object):
         """Initialize instance.
 
         Args:
-            connect (rayvision_api.api.connect.Connect): The connect instance.
+            connect (rayvision_api.connect.Connect): The connect instance.
 
         """
         self._connect = connect
@@ -32,7 +32,7 @@ class RenderEnvOperator(object):
                     }
 
         Returns:
-            dict: Render env info.
+            dict: Render env profile.
                 e.g.:
                     {
                         'editName': 'tests'
@@ -97,7 +97,7 @@ class RenderEnvOperator(object):
                 3dsmax
 
         Return:
-            list: Software info.
+            list: Software profile.
                 e.g.:
                      [
                         {

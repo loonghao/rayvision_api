@@ -15,7 +15,7 @@ def fixture_query(rayvision_connect):
 
 # pylint: disable=redefined-outer-name
 def test_platforms(fixture_query, mock_requests):
-    """Test query all platforms."""
+    """Test query all render_platforms."""
     mock_requests({'code': 200,
                    'data': [{'platform': 2,
                              'name': 'platform2'},

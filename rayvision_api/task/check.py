@@ -105,7 +105,7 @@ class RayvisionCheck(object):
     def check_task_info(self, task_info):
         """Check and add the required parameter information."""
         if not task_info:
-            raise RayvisionError(2000, "task info can't be empty.")
+            raise RayvisionError(2000, "task profile can't be empty.")
 
         task_id = task_info["task_info"].get("task_id", None)
         user_id = task_info["task_info"].get("task_id", None)

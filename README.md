@@ -17,29 +17,18 @@ A Python-based API for Using Renderbus cloud rendering service.
 #### 2.使用demo
 
 ```python
+
 from rayvision_api import RayvisionAPI
+api_access_id = "xxxxxx"
+api_access_key = "xxxxx"
+ray = RayvisionAPI(access_id=api_access_id, access_key=api_access_key)
+# Print current user profiles.
+print(ray.user_operator)
+# Access profile settings or info like a object.
+print(ray.user_operator.user_name)
+print(ray.user_operator.email)
+print(ray.user_operator.user_id)
 
-user_info = {
-    "domain_name": "task.renderbus.com",
-    "platform": "2",
-    "access_id": "xxxx",
-    "access_key": "xxxx",
-    "local_os": 'windows',
-    "workspace": "c:/workspace",
-}
-
-api = RayvisionAPI(access_id=user_info['access_id'],
-                   access_key=user_info['access_key'],
-                   domain=user_info['domain_name'],
-                   platform=user_info['platform'])
-
-print("======= user profile=============")
-user_profile = api.user.query_user_profile()
-print(user_profile)
-
-print("======= user setting=============")
-user_setting = api.user.query_user_setting()
-print(user_setting)
 ```
 
 #### 3. 更多

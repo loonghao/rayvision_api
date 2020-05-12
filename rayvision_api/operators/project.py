@@ -1,47 +1,47 @@
-"""API operation on tags."""
+"""Provide a class for operating project."""
 
 
-class TagOperator(object):
-    """Task tag settings."""
+class ProjectOperator(object):
+    """The operator of the Project."""
 
     def __init__(self, connect):
         """Initialize instance.
 
         Args:
-            connect (rayvision_api.api.connect.Connect): The connect instance.
+            connect (rayvision_api.connect.Connect): The connect instance.
 
         """
         self._connect = connect
 
-    def add_label(self, new_name, status=1):
-        """Add a custom label.
+    def add(self, project_name, status=1):
+        """Add a new project.
 
         Args:
-            new_name (str): Label name.
+            project_name (str): Label name.
             status (int, optional): Label status,0 or 1,default is 1.
 
         """
         data = {
-            'newName': new_name,
+            'newName': project_name,
             'status': status
         }
         return self._connect.post(self._connect.url.addLabel, data)
 
-    def delete_label(self, del_name):
-        """Delete custom label.
+    def delete(self, project_name):
+        """Delete the project by given name.
 
         Args:
-            del_name (str): The name of the label to be deleted.
+            project_name (str): The name of the label to be deleted.
 
         """
         return self._connect.post(self._connect.url.deleteLabel,
-                                  {'delName': del_name})
+                                  {'delName': project_name})
 
-    def get_label_list(self):
-        """Get custom labels.
+    def _get_label_list(self):
+        """Get current exits projects.
 
         Returns:
-            dict: Label list info.
+            dict: The information about the projects.
                 e.g.:
                     {
                         "projectNameList": [
@@ -56,11 +56,11 @@ class TagOperator(object):
         return self._connect.post(self._connect.url.getLabelList,
                                   validator=False)
 
-    def get_project_list(self):
-        """Get custom labels.
+    def get_projects(self):
+        """Get current exits projects.
 
         Returns:
-            list: Label list info.
+            list of dict: The information about the projects.
                 e.g.:
                     [
                         {
@@ -70,4 +70,4 @@ class TagOperator(object):
                     ]
 
         """
-        return self.get_label_list()['projectNameList']
+        return self._get_label_list()["projectNameList"]

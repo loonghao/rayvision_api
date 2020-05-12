@@ -57,7 +57,7 @@ project = u'rayvision_api'
 copyright = u'2018 Rayvision Core Dev Team'
 author = u''
 
-# The version info for the project you're documenting, acts as replacement for
+# The version profile for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 release = 'latest'

@@ -4,13 +4,13 @@
 import pytest
 
 from rayvision_api.exception import RayvisionAPIError
-from rayvision_api.operators import TaskOperator
+from rayvision_api.operators import JobOperator
 
 
 @pytest.fixture()
 def fixture_task(rayvision_connect):
     """Get a Task object."""
-    return TaskOperator(rayvision_connect)
+    return JobOperator(rayvision_connect)
 
 
 # pylint: disable=redefined-outer-name

@@ -77,7 +77,7 @@ class RayvisionTask(object):
             access_id=self.access_id,
             access_key=self.access_key,
             domain=self.domain,
-            platform=self.platform,
+            render_platform=self.platform,
             protocol='https',
             headers=None
         )
@@ -98,7 +98,7 @@ class RayvisionTask(object):
         self.tips_json_path = os.path.join(work_dir, 'tips.json')
         self.upload_json_path = os.path.join(work_dir, 'upload.json')
 
-        # Process asset info.
+        # Process asset profile.
         self.task_info = TASK_INFO
         self.set_render_config()
         self.task_info['task_info']['task_id'] = self.task_id
@@ -233,7 +233,7 @@ class RayvisionTask(object):
         project_id = ''
         tag = Tag(self.connect)
         for _ in range(2):
-            label_dict_list = (tag.get_label_list().
+            label_dict_list = (tag._get_label_list().
                                get('projectNameList', []))
             for label_dict in label_dict_list:
                 if label_dict['projectName'] == project_name:
@@ -242,7 +242,7 @@ class RayvisionTask(object):
                     break
             # Add a label if the no label exists.
             if not is_label_exist:
-                tag.add_label(project_name, '0')
+                tag.add(project_name, '0')
             else:
                 if project_id == '':
                     continue

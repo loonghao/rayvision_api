@@ -89,7 +89,7 @@ class RayvisionHTTPErrorProcessor(HTTPErrorProcessor):
             Exception: Abnormal response.
 
         """
-        code, msg, data = response.code, response.msg, response.info()
+        code, msg, data = response.code, response.msg, response.profile()
 
         # According to RFC 2616, "2xx" code indicates that the client's
         # request was successfully received, understood, and accepted.
