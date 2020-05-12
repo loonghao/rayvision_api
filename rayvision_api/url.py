@@ -1,16 +1,26 @@
 from enum import Enum
 
 
-def assemble_api_url(domain, operators, protocol='https'):
-    """Assemble the requests api url."""
-    return '{}://{}{}'.format(protocol, domain, operators)
+def assemble_api_url(domain, api_url, protocol_type='https'):
+    """Assemble the requests api url.
+    
+    Args:
+        domain (str): The domain of the render farm.
+        api_url (str): The url of the operator.
+        protocol_type (str, optional): The type of the protocol 
+    
+    Returns:
+        str: Assembled url address for the API.
+    
+    """
+    return "{}://{}{}".format(protocol_type, domain, api_url)
 
 
 class ApiUrl(str, Enum):
-    queryPlatforms = '/api/render/common/queryPlatforms'
-    queryUserProfile = '/api/render/user/queryUserProfile'
-    queryUserSetting = '/api/render/user/queryUserSetting'
-    updateUserSetting = '/api/render/user/updateUserSetting'
+    queryPlatforms = "/api/render/common/queryPlatforms"
+    queryUserProfile = "/api/render/user/queryUserProfile"
+    queryUserSetting = "/api/render/user/queryUserSetting"
+    updateUserSetting = "/api/render/user/updateUserSetting"
     getTransferBid = '/api/render/task/getTransferBid'
     createTask = '/api/render/task/createTask'
     submitTask = '/api/render/task/submitTask'
@@ -35,7 +45,7 @@ class ApiUrl(str, Enum):
     deleteRenderEnv = '/api/render/common/deleteRenderEnv'
     setDefaultRenderEnv = '/api/render/common/setDefaultRenderEnv'
     getRenderEnv = '/api/render/common/getRenderEnv'
-    updateTaskUserLevel = '/api/rendering/task/renderingTask/updateTaskUserLevel'
+    updateTaskUserLevel = "/api/rendering/task/renderingTask/updateTaskUserLevel"  # pylint: disable=line-too-long
     getRaySyncUserKey = '/api/render/user/getRaySyncUserKey'
     getTransferServerMsg = '/api/render/task/getTransferServerMsg'
     loadTaskProcessImg = '/api/render/task/loadTaskProcessImg'

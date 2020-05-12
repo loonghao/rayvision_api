@@ -57,7 +57,7 @@ def write_json(json_path, data, encoding='utf-8', ensure_ascii=True):
         json.dump(data, f_json, ensure_ascii=ensure_ascii, indent=2)
 
 
-def read_load(json_path, encoding='utf-8'):
+def read_load(json_path, encoding="utf-8"):
     """Load the data from the json file.
 
     Args:

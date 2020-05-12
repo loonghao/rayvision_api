@@ -1,3 +1,4 @@
+"""Provides paths related functions."""
 import os
 
 

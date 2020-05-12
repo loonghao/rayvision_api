@@ -24,8 +24,8 @@ class DataValidator(object):
         try:
             return read_yaml(file_path)
         except IOError:
-            raise ValueError("No schema found that matches the current "
-                             "{}.".format(self._schema_name))
+            raise ValueError("No schema found that matches the current"
+                             " {}.".format(self._schema_name))
 
     def validate(self, ignore_required=False):
         """Validate itself against the internal schema.

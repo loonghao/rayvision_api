@@ -85,7 +85,7 @@ class Connect(object):
         if validator:
             data = validate_data(data, schema_name)
         request_address = assemble_api_url(self.domain, api_url,
-                                           protocol=self._protocol)
+                                           protocol_type=self._protocol)
         headers = self._handle_headers(api_url, data)
         data = json.dumps(data)
         self.logger.debug('POST: %s', request_address)

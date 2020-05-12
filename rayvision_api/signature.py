@@ -221,6 +221,6 @@ def hump2underline(hump_str):
 
     """
     # https://regex101.com/r/xZYoLp/1
-    patt = re.compile(r'([a-z]|\d)([A-Z])')
+    patt = re.compile(r"r([a-z]|\d)([A-Z])")
     underline_str = re.sub(patt, r'\1_\2', hump_str).lower()
     return underline_str
