@@ -3,6 +3,7 @@
 import logging
 import os
 from rayvision_log import init_logger
+import requests
 
 from rayvision_api.connect import Connect
 from rayvision_api.operators import RenderEnvOperator
@@ -68,12 +69,15 @@ class RayvisionAPI(object):
                 'Required "access_key" not specified. Pass as argument or set '
                 'in environment variable RAYVISION_API_KEY.'
             )
+        self._managed_request = None
+        self._request = requests.Session()
 
         self._connect = Connect(access_id,
                                 access_key,
                                 protocol,
                                 domain,
-                                render_platform)
+                                render_platform,
+                                session=self._request)
 
         # Initial all api instance.
         self.user_operator = UserOperator(self._connect)
@@ -182,3 +186,9 @@ class RayvisionAPI(object):
 
         """
         return self.job_operator.submit_task(task_info)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._request.close()

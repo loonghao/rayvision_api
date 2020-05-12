@@ -197,7 +197,7 @@ class JobOperator(object):
         }
         return self._connect.post(self._connect.url.setOverTimeStop, data)
 
-    def full_speed(self, task_id_list):
+    def set_full_speed_render(self, task_id_list):
         """Full to render.
 
         Args:
@@ -267,8 +267,8 @@ class JobOperator(object):
             data['endTime'] = end_time
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
-    def task_frames(self, task_id, page_num, page_size,
-                    search_keyword=None):
+    def get_task_frames(self, task_id, page_num, page_size,
+                        search_keyword=None):
         """Get task rendering frame details.
 
         Args:
@@ -314,7 +314,7 @@ class JobOperator(object):
             data['searchKeyword'] = search_keyword
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
-    def all_frame_status(self):
+    def ge_all_job_frame_status(self):
         """Get the overview of task rendering frame.
 
         Returns:
@@ -369,7 +369,7 @@ class JobOperator(object):
 
         return self._connect.post(self._connect.url.restartFrame, data)
 
-    def task_info(self, task_ids_list):
+    def get_job_info(self, task_ids_list):
         """Get task details.
 
         Args:

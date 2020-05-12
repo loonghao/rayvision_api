@@ -50,8 +50,8 @@ def test_all_frame_status(fixture_query, mock_requests):
              'failedFramesTotal': 230, 'waitingFramesTotal': 0,
              'totalFrames': 241,
          }})
-    assert fixture_query.all_frame_status()['totalFrames'] == 241
-    assert fixture_query.all_frame_status()['waitingFramesTotal'] == 0
+    assert fixture_query.ge_all_job_frame_status()['totalFrames'] == 241
+    assert fixture_query.ge_all_job_frame_status()['waitingFramesTotal'] == 0
 
 
 def test_supported_software(fixture_query, mock_requests):

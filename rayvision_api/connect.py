@@ -1,16 +1,17 @@
-"""Request, request header and request result processing."""
+"""Provides session connections."""
 
+# Import build-in modules
 import copy
 import json
 import logging
 from pprint import pformat
 import platform
 import time
-
 import requests
 from tenacity import retry
 from tenacity import stop_after_attempt, wait_random
 
+# Import local modules
 from rayvision_api.constants import HEADERS
 from rayvision_api.exception import RayvisionAPIError
 from rayvision_api import signature
@@ -20,11 +21,17 @@ from rayvision_api.url import assemble_api_url
 
 
 class Connect(object):
-    """Connect operation with the server, request."""
+    """provides session connections.."""
 
-    def __init__(self, access_id, access_key, protocol, domain, render_platform,
-                 headers=None):
-        """Connect parameter initialization.
+    def __init__(self,
+                 access_id,
+                 access_key,
+                 protocol,
+                 domain,
+                 render_platform,
+                 headers=None,
+                 session=None):
+        """Initialize Connect instance.
 
         Args:
             access_id (str): The access id of API.
@@ -32,6 +39,8 @@ class Connect(object):
             domain (str, optional): The domain address of the API.
             render_platform (str, optional): The platform of renderFarm.
             protocol (str, optional): The requests protocol.
+            session (requests.Session, optional): The session of the requests
+                instance.
 
         """
         self.logger = logging.getLogger(__name__)
@@ -48,6 +57,8 @@ class Connect(object):
         self._headers = HEADERS
         self._headers['accessId'] = access_id
         self._headers['platform'] = self.render_platform
+        self._session_request = session or requests.Session()
+        self.record_operations = True
 
     @property
     def headers(self):
@@ -91,7 +102,9 @@ class Connect(object):
         self.logger.debug('POST: %s', request_address)
         self.logger.debug('HTTP Headers: %s', pformat(headers))
         self.logger.debug('HTTP Body: %s', data)
-        response = requests.post(request_address, data, headers=headers)
+
+        response = self._session_request.post(request_address,
+                                              data, headers=headers)
         json_response = response.json()
         self.logger.debug('HTTP Response: %s', json_response)
         code = json_response["code"]

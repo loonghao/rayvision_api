@@ -33,7 +33,7 @@ HEADERS = {
     'nonce': '',
     'signature': '',
     'version': '1.0.0',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
 }
 
 

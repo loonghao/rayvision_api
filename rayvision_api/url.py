@@ -3,15 +3,15 @@ from enum import Enum
 
 def assemble_api_url(domain, api_url, protocol_type='https'):
     """Assemble the requests api url.
-    
+
     Args:
         domain (str): The domain of the render farm.
         api_url (str): The url of the operator.
-        protocol_type (str, optional): The type of the protocol 
-    
+        protocol_type (str, optional): The type of the protocol
+
     Returns:
         str: Assembled url address for the API.
-    
+
     """
     return "{}://{}{}".format(protocol_type, domain, api_url)
 
