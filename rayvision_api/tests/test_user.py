@@ -58,3 +58,109 @@ def test_update_user_setting(user_operator, mock_requests):
         task_over_time = 2582
         user_operator.update_user_setting(task_over_time)
     assert 'Update UserOperator setting failed.' in str(str(err.value))
+
+
+
+# pylint: disable=redefined-outer-name
+def test_platforms(user_operator, mock_requests):
+    """Test query all render_platforms."""
+    mock_requests({'code': 200,
+                   'data': [{'platform': 2,
+                             'name': 'platform2'},
+                            {'platform': 3,
+                             'name': 'platform3'}]})
+    assert user_operator.platforms()[0]['platform'] == 2
+
+
+def test_error_detail(user_operator, mock_requests):
+    """Test we can get correct error message."""
+    mock_requests({'code': 200, 'data': [{'code': 12345,
+                                          'solutionPath': 'c:/tests.com'}]})
+    details = user_operator.error_detail(12345)
+    assert details[0]['code'] == 12345
+    assert details[0]['solutionPath'] == 'c:/tests.com'
+
+
+def test_get_task_list(user_operator, mock_requests):
+    """Test if code ``404`` error we can get the corresponding error return."""
+    mock_requests({'code': 404, 'data': {}, 'message': 'Get task failed.'})
+    with pytest.raises(RayvisionAPIError) as err:
+        user_operator.get_task_list()
+    assert 'Get task failed.' in str(err.value)
+
+
+def test_all_frame_status(user_operator, mock_requests):
+    """Test that we can go to all frame states."""
+    mock_requests(
+        {'code': 200,
+         'data': {
+             'executingFramesTotal': 0, 'doneFramesTotal': 11,
+             'failedFramesTotal': 230, 'waitingFramesTotal': 0,
+             'totalFrames': 241,
+         }})
+    assert user_operator.ge_all_job_frame_status()['totalFrames'] == 241
+    assert user_operator.ge_all_job_frame_status()['waitingFramesTotal'] == 0
+
+
+def test_supported_software(user_operator, mock_requests):
+    """Test supported_software this interface."""
+    mock_requests(
+        {'data': {
+            'renderInfoList': [
+                {
+                    'cgType': 'ma;mb', 'cgId': 2000, 'isNeedProjectPath': 1,
+                    'isNeedAnalyse': 1, 'iconPath': '/img/softimage/maya.png',
+                    'isSupportLinux': 1, 'cgName': 'Maya'
+                },
+                {
+                    'cgType': 'project;render', 'cgId': 2013,
+                    'isNeedProjectPath': 3,
+                    'isNeedAnalyse': 1,
+                    'iconPath': '/img/softimage/clarisse.png',
+                    'isSupportLinux': 1, 'cgName': 'Clarisse'
+                }],
+            'defaultCgId': 2000,
+            'isAutoCommit': 2,
+        }}
+    )
+    info = user_operator.supported_software()['renderInfoList']
+    assert info[0]['cgName'] == 'Maya'
+    assert info[0]['cgType'] == 'ma;mb'
+
+
+def test_get_transfer_server_msg(user_operator, mock_requests):
+    """Test supported_software this interface."""
+    mock_requests(
+        {'data': {
+            'raysyncTransfer': {
+                'port': 2542,
+                'proxyIp': 'render.raysync.cn',
+                'proxyPort': 32011,
+                'serverIp': '127.0.0.1',
+                'serverPort': 2121,
+                'sslPort': 2543
+            }
+        }}
+    )
+    info = user_operator.get_transfer_server_msg()['raysyncTransfer']
+    assert info['port'] == 2542
+    assert info['proxyIp'] == 'render.raysync.cn'
+    assert info['proxyPort'] == 32011
+    assert info['serverIp'] == '127.0.0.1'
+    assert info['serverPort'] == 2121
+    assert info['sslPort'] == 2543
+
+
+def test_get_raysync_user_key(user_operator, mock_requests):
+    """Test supported_software this interface."""
+    mock_requests(
+        {'data': {
+            'raySyncUserKey': '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d',
+            'userName': 'test',
+            'platform': 2,
+        }}
+    )
+    info = user_operator.get_raysync_user_key()
+    assert info['raySyncUserKey'] == '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d'
+    assert info['userName'] == 'test'
+    assert info['platform'] == 2

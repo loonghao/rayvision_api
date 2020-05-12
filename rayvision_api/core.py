@@ -90,6 +90,12 @@ class RayvisionAPI(object):
         """rayvision.api.Connect: The current connect instance."""
         return self._connect
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._request.close()
+
     @property
     def render_platforms(self):
         """Get the currently available rendering platform.
@@ -186,9 +192,3 @@ class RayvisionAPI(object):
 
         """
         return self.job_operator.submit_task(task_info)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._request.close()

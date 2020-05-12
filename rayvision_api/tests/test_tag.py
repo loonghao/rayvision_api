@@ -14,7 +14,7 @@ def fixture_tag(rayvision_connect):
 
 
 # pylint: disable=redefined-outer-name
-def test_add_label(fixture_tag, mock_requests):
+def test_add_project(fixture_tag, mock_requests):
     """Test if code ``504`` error we can get the corresponding error return."""
     mock_requests(
         {

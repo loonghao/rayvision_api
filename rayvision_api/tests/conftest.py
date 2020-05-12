@@ -19,7 +19,7 @@ def user_info():
     """Get the user's login information."""
     return {
         'domain': 'task.renderbus.com',
-        'platform': '2',
+        'render_platform': '2',
         'access_id': 'test_access_id',
         'access_key': 'test_access_key',
         'protocol': 'https'
@@ -49,7 +49,7 @@ def header():
     return {
         'accessId': 'xxx',
         'channel': '4',
-        'platform': '2',
+        'render_platform': '2',
         'UTCTimestamp': '32166266',
         'nonce': '1465',
         'version': 'dev',
@@ -96,28 +96,3 @@ def rayvision_connect(user_info_dict):
     from rayvision_api.connect import Connect
     user_info_dict['headers'] = {'version': 'dev'}
     return Connect(**user_info_dict)
-
-
-@pytest.fixture()
-def task(task_info, mocker):
-    """Create an RayvisionTask object."""
-    from rayvision_api.task.handle import RayvisionTask
-    mocker_task_id = mocker.patch.object(RayvisionTask, '_generate_task_id')
-    mocker_task_id.return_value = '159753'
-    mocker_user_id = mocker.patch.object(RayvisionTask, 'get_user_id')
-    mocker_user_id.return_value = '5282582'
-    mocker_user_id = mocker.patch.object(RayvisionTask,
-                                         'check_and_add_project_name')
-    mocker_user_id.return_value = '9436361'
-    return RayvisionTask(**task_info)
-
-
-@pytest.fixture()
-def check(task, tmpdir):
-    """Create an RayvisionCheck object."""
-    from rayvision_api.task.check import RayvisionCheck
-    if "win" in sys.platform.lower():
-        os.environ["USERPROFILE"] = str(tmpdir)
-    else:
-        os.environ["HOME"] = str(tmpdir)
-    return RayvisionCheck(task)
