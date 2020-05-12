@@ -10,11 +10,19 @@ rayvision_api
 
 A Python-based API for Using Renderbus cloud rendering service.
 
-#### 1. 系统要求
+-------------------------------------------------------------------------------
+**This is a refactored branch based on the official version.**
 
-​        rayvision_api 可在 Linux和 Windows 上运行。使用python2.7.10+或者python3.6+
+Changes
+--------
+- Support use session of request.
+- API key and API access id can be overloaded using environment variables `RAYVISION_API_KEY` and `RAYVISION_API_ACCESS_ID`.
+- Code decoupling.
+- Remove unnecessary code.
+- Improve namespace and function naming.
+- Add scheme to verify data type for `POST`.
 
-#### 2.使用demo
+# Examples:
 
 ```python
 
@@ -31,6 +39,24 @@ print(ray.user_operator.user_id)
 
 ```
 
-#### 3. 更多
+```python
 
-详细的使用请参考[RenderBus SDK 显示说明书]( https://renderbus.readthedocs.io/zh/latest/index.html  "SDK详细说明书")
+from rayvision_api import RayvisionAPI
+
+api_access_id = "xxxxxx"
+api_access_key = "xxxxx"
+
+with RayvisionAPI(access_id=api_access_id, 
+                  access_key=api_access_key) as ray:
+    # Print current user profiles.
+    print(ray.user_operator)
+    # Access profile settings or info like a object.
+    print(ray.user_operator.user_name)
+    print(ray.user_operator.email)
+    print(ray.user_operator.user_id)
+
+```
+
+# Documentation
+
+- [Official documents]( https://renderbus.readthedocs.io/en/latest/index.html)
