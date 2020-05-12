@@ -1,12 +1,10 @@
-rayvision_api
+rayvision-api
 =============
-
-[![](https://img.shields.io/badge/pypi%20package-1.1.1-green)](https://pypi.org/project/rayvision-api/)
-[![](https://img.shields.io/badge/docs--%E4%B8%AD%E6%96%87%E7%AE%80%E4%BD%93-latest-green)](https://renderbus.readthedocs.io/zh/latest)
 [![](https://img.shields.io/badge/docs--English-latest-green)](https://renderbus.readthedocs.io/en/latest)
 [![](https://img.shields.io/badge/license-Apache%202-blue)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 ![](https://img.shields.io/badge/python-2.7.10+%20%7C%203.6%20%7C%203.7-blue)
 ![](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)
+[![CodeFactor](https://www.codefactor.io/repository/github/loonghao/rayvision_api/badge)](https://www.codefactor.io/repository/github/loonghao/rayvision_api)
 
 A Python-based API for Using Renderbus cloud rendering service.
 
@@ -15,6 +13,7 @@ A Python-based API for Using Renderbus cloud rendering service.
 
 Changes
 --------
+- Follow the [Semantic Versioning](https://semver.org/) standard.
 - Support use session of request.
 - API key and API access id can be overloaded using environment variables `RAYVISION_API_KEY` and `RAYVISION_API_ACCESS_ID`.
 - Code decoupling.
