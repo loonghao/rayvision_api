@@ -1,2 +1,3 @@
 taskId:
   type: integer
+  required: True

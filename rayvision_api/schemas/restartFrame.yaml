@@ -1,0 +1,6 @@
+taskIds:
+  type: ingeter
+ids:
+  type: list
+selectAll:
+  type: ingeter

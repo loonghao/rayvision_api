@@ -1,0 +1,4 @@
+newName:
+  type: string
+status:
+  type: string

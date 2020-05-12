@@ -1,6 +1,6 @@
 pageNum:
-  type: interger
+  type: integer
 pageSize:
-  type: interger
+  type: integer
 statusList:
   type: list

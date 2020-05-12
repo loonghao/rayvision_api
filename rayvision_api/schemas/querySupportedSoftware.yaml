@@ -1,0 +1,6 @@
+isAutoCommit:
+  type: integer
+renderInfoList:
+  type: list
+defaultCgId:
+  type: integer
