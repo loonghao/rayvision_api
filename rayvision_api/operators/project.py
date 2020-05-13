@@ -1,5 +1,12 @@
 """Provide a class for operating project."""
 
+from pprint import pformat
+
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 
 class ProjectOperator(object):
     """The operator of the Project."""
@@ -13,8 +20,8 @@ class ProjectOperator(object):
         """
         self._connect = connect
 
-    def add(self, project_name, status=1):
-        """Add a new project.
+    def create_project(self, project_name, status=1):
+        """Create a new project.
 
         Args:
             project_name (str): Label name.
@@ -27,7 +34,7 @@ class ProjectOperator(object):
         }
         return self._connect.post(self._connect.url.addLabel, data)
 
-    def delete(self, project_name):
+    def delete_project(self, project_name):
         """Delete the project by given name.
 
         Args:
@@ -37,7 +44,8 @@ class ProjectOperator(object):
         return self._connect.post(self._connect.url.deleteLabel,
                                   {'delName': project_name})
 
-    def _get_label_list(self):
+    @lru_cache(maxsize=None)
+    def _get_project_list(self):
         """Get current exits projects.
 
         Returns:
@@ -56,6 +64,7 @@ class ProjectOperator(object):
         return self._connect.post(self._connect.url.getLabelList,
                                   validator=False)
 
+    @lru_cache(maxsize=2)
     def get_projects(self):
         """Get current exits projects.
 
@@ -70,4 +79,7 @@ class ProjectOperator(object):
                     ]
 
         """
-        return self._get_label_list()["projectNameList"]
+        return self._get_project_list()["projectNameList"]
+
+    def __repr__(self):
+        return pformat(self.get_projects())

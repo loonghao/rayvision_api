@@ -9,11 +9,14 @@ import platform
 import time
 import requests
 from tenacity import retry
-from tenacity import stop_after_attempt, wait_random
+from tenacity import stop_after_attempt
+from tenacity import wait_random
+from tenacity import retry_if_exception_type
 
 # Import local modules
 from rayvision_api.constants import HEADERS
 from rayvision_api.exception import RayvisionAPIError
+from rayvision_api.exception import RayvisionAPIParameterError
 from rayvision_api import signature
 from rayvision_api.validator import validate_data
 from rayvision_api.url import ApiUrl
@@ -66,8 +69,9 @@ class Connect(object):
         return self._headers
 
     @retry(reraise=True, stop=stop_after_attempt(5),
+           retry=retry_if_exception_type(RayvisionAPIError),
            wait=wait_random(min=1, max=2))
-    def post(self, api_url, data=None, validator=True):
+    def post(self, api_url, post_data=None, validator=True):
         """Send an post request and return data object if no error occurred.
 
         Request processing through the decorator, if the request fails more
@@ -80,7 +84,7 @@ class Connect(object):
                         /api/render/common/queryPlatforms
                         /api/render/user/queryUserProfile
                         /api/render/user/queryUserSetting
-            data (dict, optional): Request data.
+            post_data (dict, optional): Request data.
             validator (bool, optional): Validator the data.
 
         Returns:
@@ -91,25 +95,33 @@ class Connect(object):
                 the error message, and the request address.
 
         """
-        data = data or {}
+        post_data = post_data or {}
         schema_name = api_url.split("/")[-1]
         if validator:
-            data = validate_data(data, schema_name)
+            post_data = validate_data(post_data, schema_name)
         request_address = assemble_api_url(self.domain, api_url,
                                            protocol_type=self._protocol)
-        headers = self._handle_headers(api_url, data)
-        data = json.dumps(data)
+        headers = self._handle_headers(api_url, post_data)
+        post_data = json.dumps(post_data)
         self.logger.debug('POST: %s', request_address)
         self.logger.debug('HTTP Headers: %s', pformat(headers))
-        self.logger.debug('HTTP Body: %s', data)
+        self.logger.debug('HTTP Body: %s', post_data)
+
+        def print_url(r, *args, **kwargs):
+            print(r.cookies)
 
         response = self._session_request.post(request_address,
-                                              data, headers=headers)
+                                              post_data,
+                                              headers=headers,
+                                              hooks=dict(response=print_url))
         json_response = response.json()
         self.logger.debug('HTTP Response: %s', json_response)
         code = json_response["code"]
+        message = json_response['message']
+        if code == 601:
+            raise RayvisionAPIParameterError(message, post_data, response.url)
         if code != 200:
-            raise RayvisionAPIError(code, json_response['message'],
+            raise RayvisionAPIError(code, message,
                                     response.url)
         return json_response["data"]
 

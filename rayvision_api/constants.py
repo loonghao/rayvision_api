@@ -8,6 +8,7 @@ PACKAGE_NAME = 'rayvision_api'
 DCC_ID_MAPPINGS = {
     'maya': 2000,
     '3ds Max': 2001,
+    "3dsmax": 2001,
     'lightwave': 2002,
     'arnold': 2003,
     'houdini': 2004,

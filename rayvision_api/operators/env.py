@@ -1,5 +1,10 @@
 """Set the rendering environment configuration."""
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 from rayvision_api import constants
 
 
@@ -86,6 +91,7 @@ class RenderEnvOperator(object):
         }
         return self._connect.post(self._connect.url.setDefaultRenderEnv, data)
 
+    @lru_cache(maxsize=2)
     def get_render_env(self, name):
         """Get the user rendering environment configuration.
 

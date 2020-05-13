@@ -1,4 +1,9 @@
 """Interface to operate the user."""
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 from pprint import pformat
 from future.moves.urllib.error import HTTPError
 from rayvision_api.exception import RayvisionError
@@ -34,6 +39,7 @@ class UserOperator(object):
     def user_id(self):
         return self.query_user_profile()["userId"]
 
+    @lru_cache()
     def query_user_profile(self):
         """Get user profile.
 
@@ -62,6 +68,7 @@ class UserOperator(object):
         return self._connect.post(self._connect.url.queryUserProfile,
                                   validator=False)
 
+    @lru_cache()
     def query_user_setting(self):
         """Get user setting.
 
@@ -101,6 +108,7 @@ class UserOperator(object):
         }
         return self._connect.post(self._connect.url.updateUserSetting, data)
 
+    @lru_cache()
     def get_transfer_bid(self):
         """Get user transfer BID.
 
@@ -173,11 +181,13 @@ class UserOperator(object):
 
         """
         for key, value in user_profile.items():
+            # print key
             key_underline = hump2underline(key)
             if key_underline != "platform":
                 self._info[key_underline] = value
 
-    def get_transfer_server_msg(self):
+    @lru_cache()
+    def get_transfer_server_config(self):
         """Get the user rendering environment configuration.
 
         Returns:
@@ -201,6 +211,7 @@ class UserOperator(object):
         }
         return self._connect.post(self._connect.url.getTransferServerMsg, data)
 
+    @lru_cache()
     def get_raysync_user_key(self):
         """Get the user rendering environment configuration.
 
@@ -224,6 +235,7 @@ class UserOperator(object):
     def id(self):
         return self.profile["user_id"]
 
+    @lru_cache(maxsize=2)
     def __getattribute__(self, attribute):
         """Get an attribute's value and perform deferred loading once."""
         _getattr = super(UserOperator, self).__getattribute__

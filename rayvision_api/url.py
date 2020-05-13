@@ -1,6 +1,12 @@
 from enum import Enum
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
 
+
+@lru_cache(maxsize=2)
 def assemble_api_url(domain, api_url, protocol_type='https'):
     """Assemble the requests api url.
 

@@ -4,6 +4,10 @@ import logging
 import os
 from rayvision_log import init_logger
 import requests
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
 
 from rayvision_api.connect import Connect
 from rayvision_api.operators import RenderEnvOperator
@@ -69,9 +73,7 @@ class RayvisionAPI(object):
                 'Required "access_key" not specified. Pass as argument or set '
                 'in environment variable RAYVISION_API_KEY.'
             )
-        self._managed_request = None
         self._request = requests.Session()
-
         self._connect = Connect(access_id,
                                 access_key,
                                 protocol,
@@ -97,6 +99,7 @@ class RayvisionAPI(object):
         self._request.close()
 
     @property
+    @lru_cache(maxsize=None)
     def render_platforms(self):
         """Get the currently available rendering platform.
 
@@ -116,6 +119,7 @@ class RayvisionAPI(object):
                                   {'zone': zone})
 
     @property
+    @lru_cache(maxsize=None)
     def supported_software(self):
         """Get supported rendering software.
 
@@ -142,7 +146,7 @@ class RayvisionAPI(object):
         return self._connect.post(self._connect.url.querySupportedSoftware,
                                   validator=False)
 
-    @property
+    @lru_cache(maxsize=2)
     def supported_plugin(self, name):
         """Get supported rendering software plugins.
 
@@ -180,7 +184,7 @@ class RayvisionAPI(object):
                     }
 
         """
-        cg_id = DCC_ID_MAPPINGS[name.strip().lower()]
+        cg_id = DCC_ID_MAPPINGS[name.strip()]
         data = {'cgId': cg_id, 'osName': self.connect.system_platform}
         return self._connect.post(self._connect.url.querySupportedPlugin, data)
 

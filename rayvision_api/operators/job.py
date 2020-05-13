@@ -1,8 +1,8 @@
-"""Interface to operate on the task.
-
-
-
-"""
+"""Interface to operate on the task."""
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
 
 from rayvision_api.exception import RayvisionError
 
@@ -179,7 +179,7 @@ class JobOperator(object):
         }
         return self._connect.post(self._connect.url.updateTaskUserLevel, data)
 
-    def set_task_overtime_top(self, task_id_list, overtime):
+    def set_job_overtime_top(self, task_id_list, overtime):
         """Set the task timeout stop time.
 
         Args:
@@ -212,6 +212,7 @@ class JobOperator(object):
         }
         return self._connect.post(self._connect.url, data)
 
+    @lru_cache(maxsize=2)
     def get_task_list(self, page_num=1, page_size=2, status_list=None,
                       search_keyword=None,
                       start_time=None, end_time=None):
@@ -267,6 +268,7 @@ class JobOperator(object):
             data['endTime'] = end_time
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
+    @lru_cache(maxsize=2)
     def get_task_frames(self, task_id, page_num, page_size,
                         search_keyword=None):
         """Get task rendering frame details.
@@ -314,6 +316,7 @@ class JobOperator(object):
             data['searchKeyword'] = search_keyword
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
+    @lru_cache(maxsize=2)
     def ge_all_job_frame_status(self):
         """Get the overview of task rendering frame.
 
@@ -340,7 +343,7 @@ class JobOperator(object):
 
         """
         data = {
-            'taskIds': task_param_list
+            "taskIds": task_param_list
         }
         return self._connect.post(self._connect.url.restartFailedFrames, data)
 
@@ -369,6 +372,7 @@ class JobOperator(object):
 
         return self._connect.post(self._connect.url.restartFrame, data)
 
+    @lru_cache(maxsize=2)
     def get_job_info(self, task_ids_list):
         """Get task details.
 
@@ -431,6 +435,7 @@ class JobOperator(object):
         }
         return self._connect.post(self._connect.queryTaskInfo, data)
 
+    @lru_cache(maxsize=2)
     def error_detail(self, code, language='0'):
         """Get analysis error code.
 
@@ -469,6 +474,7 @@ class JobOperator(object):
         }
         return self._connect.post(self._connect.url.queryErrorDetail, data)
 
+    @lru_cache(maxsize=2)
     def get_task_processing_img(self, task_id, frame_type=None):
         """Get the task progress diagram,currently only Max software is supported.
 
@@ -522,6 +528,7 @@ class JobOperator(object):
             data["frameType"] = frame_type
         return self._connect.post(self._connect.url.loadTaskProcessImg, data)
 
+    @lru_cache(maxsize=2)
     def get_frame_thumbnall(self, frame_id, frame_status=4):
         """Load thumbnail.
 

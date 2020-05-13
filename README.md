@@ -11,6 +11,8 @@ A Python-based API for Using Renderbus cloud rendering service.
 -------------------------------------------------------------------------------
 **This is a refactored branch based on the official version.**
 
+**Three times faster than the official version of the request.**
+
 Changes
 --------
 - Follow the [Semantic Versioning](https://semver.org/) standard.
