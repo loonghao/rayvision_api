@@ -1,7 +1,24 @@
-- name: wemake-python-styleguide
-  uses: wemake-services/wemake-python-styleguide@0.14.0
-  with:
-    # Path or space-separated list of paths to lint
-    path: # optional, default is .
-    # How would you like the results to be displayed?
-    reporter: # optional, default is terminal
+name: Code Check (Wemake)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+
+    steps:
+      - name: wemake-python-styleguide
+        uses: wemake-services/wemake-python-styleguide@0.14.0
+        with:
+          # Path or space-separated list of paths to lint
+          path: # optional, default is .
+          # How would you like the results to be displayed?
+          reporter: # optional, default is terminal

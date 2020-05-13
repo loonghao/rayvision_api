@@ -71,6 +71,4 @@ def test_formatted_headers(test_case, results):
 ])
 def test_hump2underline(test_case, results):
     """Test we can get a correct result."""
-    import titlecase
-    print titlecase.titlecase(test_case)
-    assert test_case.title() == results
+    assert signature.hump2underline(test_case) == results
