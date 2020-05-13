@@ -12,4 +12,3 @@ renderSystem:
   type: ingeter
 pluginIds:
   type: list
-
