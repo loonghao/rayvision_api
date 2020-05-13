@@ -29,7 +29,7 @@ def test_generate_header_body_str(header):
     requirements on the headers structure when requesting it.
 
     """
-    results = '[POST]tests.com:api_url&UTCTimestamp=32166266&accessId=xxx&channel=4&key=value&nonce=1465&platform=2&version=dev'  # noqa: E501  # pylint: disable=line-too-long
+    results = '[POST]tests.com:api_url&UTCTimestamp=32166266&accessId=xxx&channel=4&key=value&nonce=1465&render_platform=2&version=dev'  # noqa: E501  # pylint: disable=line-too-long
     header_and_body = signature.generate_headers_body_str('tests.com',
                                                           'api_url',
                                                           header=header,
@@ -46,7 +46,7 @@ def test_headers_body_sort(header):
                          'channel',
                          'key',
                          'nonce',
-                         'platform',
+                         'render_platform',
                          'version']
 
 
@@ -71,4 +71,6 @@ def test_formatted_headers(test_case, results):
 ])
 def test_hump2underline(test_case, results):
     """Test we can get a correct result."""
-    assert signature.hump2underline(test_case) == results
+    import titlecase
+    print titlecase.titlecase(test_case)
+    assert test_case.title() == results

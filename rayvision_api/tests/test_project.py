@@ -25,7 +25,7 @@ def test_add_project(fixture_tag, mock_requests):
     with pytest.raises(RayvisionAPIError) as err:
         new_name = "afas"
         status = 0
-        fixture_tag.add(new_name, status)
+        fixture_tag.create_project(new_name, status)
     assert 'Add lable failed.' in str(err.value)
 
 
@@ -39,7 +39,7 @@ def test_delete_label(fixture_tag, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         del_name = "dsfdfa"
-        fixture_tag.delete(del_name)
+        fixture_tag.delete_project(del_name)
     assert 'Delete lable failed.' in str(err.value)
 
 

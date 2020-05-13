@@ -142,7 +142,7 @@ def test_get_transfer_server_msg(user_operator, mock_requests):
             }
         }}
     )
-    info = user_operator.get_transfer_server_msg()['raysyncTransfer']
+    info = user_operator.get_transfer_server_config()['raysyncTransfer']
     assert info['port'] == 2542
     assert info['proxyIp'] == 'render.raysync.cn'
     assert info['proxyPort'] == 32011
