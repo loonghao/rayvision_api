@@ -11,7 +11,9 @@ A Python-based API for Using Renderbus cloud rendering service.
 -------------------------------------------------------------------------------
 **This is a refactored branch based on the official version.**
 
-**Three times faster than the official version of the request.**
+**Request speed is three times faster than the official version.**
+
+**Query speed is 40 times faster than the official version.**
 
 Changes
 --------
@@ -24,22 +26,7 @@ Changes
 - Add scheme to verify data type for `POST`.
 
 # Examples:
-
-```python
-
-from rayvision_api import RayvisionAPI
-api_access_id = "xxxxxx"
-api_access_key = "xxxxx"
-ray = RayvisionAPI(access_id=api_access_id, access_key=api_access_key)
-# Print current user profiles.
-print(ray.user_operator)
-# Access profile settings or info like a object.
-print(ray.user_operator.user_name)
-print(ray.user_operator.email)
-print(ray.user_operator.user_id)
-
-```
-
+Ues the api in the context.
 ```python
 
 from rayvision_api import RayvisionAPI
@@ -55,6 +42,47 @@ with RayvisionAPI(access_id=api_access_id,
     print(ray.user_operator.user_name)
     print(ray.user_operator.email)
     print(ray.user_operator.user_id)
+
+```
+Add custom request hooks for the api.
+```python
+
+
+from rayvision_api import RayvisionAPI
+
+def print_resp_url(resp, *args, **kwargs):
+    print(resp.url)
+
+
+def check_for_errors(resp, *args, **kwargs):
+    resp.raise_for_status()
+
+# https://alexwlchan.net/2017/10/requests-hooks/
+hooks = {'response': [print_resp_url, check_for_errors]}
+options = {
+    "render_platform": "6",
+    "access_id": "xxxx",
+    "access_key": "xxxx",
+    "hooks": hooks
+}
+
+ray = RayvisionAPI(**options)
+# Print current user profiles.
+print(ray.user_operator)
+```
+Old school.
+```python
+
+from rayvision_api import RayvisionAPI
+api_access_id = "xxxxxx"
+api_access_key = "xxxxx"
+ray = RayvisionAPI(access_id=api_access_id, access_key=api_access_key)
+# Print current user profiles.
+print(ray.user_operator)
+# Access profile settings or info like a object.
+print(ray.user_operator.user_name)
+print(ray.user_operator.email)
+print(ray.user_operator.user_id)
 
 ```
 
