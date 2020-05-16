@@ -1,6 +1,0 @@
-taskIds:
-  type: list
-  required: True
-overTime:
-  type: number
-

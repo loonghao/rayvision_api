@@ -13,7 +13,7 @@ from rayvision_api.signature import hump2underline
 class UserProfile(object):
     """API user information operator."""
 
-    def __init__(self, connect):
+    def __init__(self, connect, auto_login=True):
         """Initialize instance.
 
         Args:
@@ -26,10 +26,11 @@ class UserProfile(object):
             "domain": connect.domain,
             "platform": connect.render_platform,
         }
-        try:
-            self._login()
-        except HTTPError:
-            raise RayvisionError(20020, "Login failed.")
+        if auto_login:
+            try:
+                self._login()
+            except HTTPError:
+                raise RayvisionError(20020, "Login failed.")
 
     @property
     def profile(self):
@@ -39,7 +40,7 @@ class UserProfile(object):
     def user_id(self):
         return self.query_user_profile()["userId"]
 
-    @lru_cache()
+    @lru_cache(maxsize=2)
     def query_user_profile(self):
         """Get user profile.
 
@@ -68,7 +69,7 @@ class UserProfile(object):
         return self._connect.post(self._connect.url.queryUserProfile,
                                   validator=False)
 
-    @lru_cache()
+    @lru_cache(maxsize=2)
     def query_user_setting(self):
         """Get user setting.
 
@@ -108,7 +109,7 @@ class UserProfile(object):
         }
         return self._connect.post(self._connect.url.updateUserSetting, data)
 
-    @lru_cache()
+    @lru_cache(maxsize=2)
     def get_transfer_bid(self):
         """Get user transfer BID.
 
@@ -181,12 +182,11 @@ class UserProfile(object):
 
         """
         for key, value in user_profile.items():
-            # print key
             key_underline = hump2underline(key)
             if key_underline != "platform":
                 self._info[key_underline] = value
 
-    @lru_cache()
+    @lru_cache(maxsize=2)
     def get_transfer_server_config(self):
         """Get the user rendering environment configuration.
 
@@ -206,20 +206,18 @@ class UserProfile(object):
 
         """
         zone = 1 if "renderbus" not in self._connect.domain else 2
-        data = {
-            "zone": zone
-        }
+        data = {"zone": zone}
         return self._connect.post(self._connect.url.getTransferServerMsg, data)
 
-    @lru_cache()
+    @lru_cache(maxsize=2)
     def get_raysync_user_key(self):
         """Get the user rendering environment configuration.
 
         Returns:
             dict: User login raysync information.
-                Example:
+                e.g:
                     {
-                        'raySyncUserKey': '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d',
+                        'raySyncUserKey': 'ajdasda1jd13asdad',
                         'userName': 'test',
                         'platform': 2,
                     }
@@ -244,7 +242,7 @@ class UserProfile(object):
         except AttributeError:
             try:
                 value = self.profile[attribute]
-            except KeyError as err:
+            except KeyError:
                 raise AttributeError("UserOperator"
                                      " object has no attribute "
                                      "'{}'".format(attribute))

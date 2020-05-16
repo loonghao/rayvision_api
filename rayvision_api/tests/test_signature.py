@@ -65,7 +65,7 @@ def test_formatted_headers(test_case, results):
 
 
 @pytest.mark.parametrize('test_case,results', [
-    ('MyKeyName', 'my_key_name'),
+    ('myKeyName', 'my_key_name'),
     ('myKeyname', 'my_keyname'),
     ('myKeyName', 'my_key_name')
 ])

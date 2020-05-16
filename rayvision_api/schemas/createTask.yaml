@@ -1,5 +1,0 @@
-count:
-  required: True
-  type: integer
-outUserId:
-  type: integer

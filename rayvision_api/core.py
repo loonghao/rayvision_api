@@ -1,5 +1,6 @@
 """A Python-based API for Using Renderbus cloud rendering service."""
 
+# Import built-in modules
 import logging
 import os
 from rayvision_log import init_logger
@@ -10,14 +11,13 @@ try:
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
+# Import local modules
 from rayvision_api.connect import Connect
 from rayvision_api.operators import RenderConfig
 from rayvision_api.operators import ProjectSettings
 from rayvision_api.operators import RenderJobs
 from rayvision_api.operators import UserProfile
 from rayvision_api.constants import PACKAGE_NAME
-from rayvision_api.constants import DCC_ID_MAPPINGS
-from rayvision_api.constants import SoftWare
 
 
 class RayvisionAPI(object):
@@ -154,90 +154,6 @@ class RayvisionAPI(object):
         zone = 1 if "renderbus" in self._connect.domain.lower() else 2
         return self._connect.post(self._connect.url.queryPlatforms,
                                   {'zone': zone})
-
-    @property
-    @lru_cache(maxsize=None)
-    def supported_software(self):
-        """Get supported rendering software.
-
-        Returns:
-            dict: Software profile.
-                e.g.:
-                    {
-                        "isAutoCommit": 2,
-                        "renderInfoList": [
-                            {
-                                "cgId": 2000,
-                                "cgName": "Maya",
-                                "cgType": "ma;mb",
-                                "iconPath": "/img/softimage/maya.png",
-                                "isNeedProjectPath": 3,
-                                "isNeedAnalyse": 1,
-                                "isSupportLinux": 1
-                            }
-                        ],
-                        "defaultCgId": 2001
-                    }
-
-        """
-        return self._connect.post(self._connect.url.querySupportedSoftware,
-                                  validator=False)
-
-    @property
-    @lru_cache(maxsize=2)
-    def default_render_software(self):
-        """dict: The current default render software."""
-        info_list = self.supported_software["renderInfoList"]
-        for info in info_list:
-            if info["cgId"] == self.supported_software["defaultCgId"]:
-                return info
-
-    @lru_cache(maxsize=2)
-    def supported_plugin(self, name, os_name=None):
-        """Get supported rendering software plugins.
-
-        Args:
-            name (str): The name of the DCC.
-                e.g.:
-                    maya,
-                    houdini
-            os_name (str): The platform of the OS.
-                e.g:
-                    windows
-                    linux
-
-        Returns:
-            dict: Plugin profile.
-                e.g.:
-                    {
-                        "cgPlugin": [
-                            {
-                                "cvId": 19,
-                                "pluginName": "zblur",
-                                "pluginVersions": [
-                                    {
-                                        "pluginId": 1652,
-                                        "pluginName": "zblur",
-                                        "pluginVersion": "zblur 2.02.019"
-                                    }
-                                ]
-                            },
-                        ],
-                        "cgVersion": [
-                            {
-                                "id": 23,
-                                "cgId": 2005,
-                                "cgName": "CINEMA 4D",
-                                "cgVersion": "R19"
-                            }
-                        ]
-                    }
-
-        """
-        cg_id = DCC_ID_MAPPINGS[name.strip()]
-        data = {'cgId': cg_id,
-                'osName': os_name or self.connect.system_platform}
-        return self._connect.post(self._connect.url.querySupportedPlugin, data)
 
     def submit(self, task_info, only_id=True):
         """Submit a task.

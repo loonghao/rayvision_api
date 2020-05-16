@@ -1,10 +1,179 @@
-domain:
-  type: string
-platform:
-  type: string
-access_id:
-  type: string
-access_key:
-  type: string
+abortTask:
+  taskIds:
+    type: list
+    required: True
 
-task:
+addLanel:
+  newName:
+    type: integer
+  status:
+    type: integer
+
+addRenderEnv: &render_env
+  cgId: &cg_id
+    type: string
+  cgName:
+    type: string
+  cgVersion:
+    type: string
+  renderLayerType:
+    type: integer
+  editName:
+    type: string
+  renderSystem:
+    type: integer
+  pluginIds:
+    type: list
+
+createTask:
+  count:
+    required: True
+    type: integer
+  outUserId:
+    type: integer
+
+addLabel:
+  newName:
+    type: string
+  status:
+    type: string
+
+deleteLabel:
+  delName:
+    type: string
+
+deleteRenderEnv:
+  editName:
+    type: string
+
+deleteTask:
+  taskIds:
+    type: list
+    required: True
+
+fullSpeed:
+  taskIds:
+    type: list
+    required: True
+
+getRenderEnv:
+  cgId: *cg_id
+
+getTaskList:
+  pageNum:
+    type: integer
+  pageSize:
+    type: integer
+  statusList:
+    type: list
+
+getTransferServerMsg:
+  zone:
+    type: integer
+
+loadingFrameThumbnail:
+  id:
+    type: integer
+    required: True
+  frameStatus:
+    type: integer
+    required: True
+
+loadTaskProcessImg:
+  taskId:
+    type: integer
+  frameType:
+    type: integer
+
+
+queryErrorDetail:
+  code:
+    required: True
+    type: integer
+  language:
+    type: integer
+
+queryPlatforms:
+  zone:
+    required: True
+    type: integer
+
+querySupportedPlugin:
+  cgId: *cg_id
+  osName:
+    type: string
+
+
+querySupportedSoftware:
+  isAutoCommit:
+    type: integer
+  renderInfoList:
+    type: list
+  defaultCgId: *cg_id
+
+queryTaskFrames:
+  taskId:
+    type: integer
+  searchKeyword:
+    type: integer
+  pageNum:
+    type: integer
+  pageSize:
+    type: integer
+
+queryTaskInfo:
+  taskIds:
+    type: list
+
+
+restartFailedFrames:
+  taskIds:
+    type: list
+
+restartFrame:
+  taskIds:
+    type: ingeter
+  ids:
+    type: list
+  selectAll:
+    type: ingeter
+
+setDefaultRenderEnv:
+  editName:
+    type: string
+
+setOverTimeStop:
+  taskIds:
+    type: list
+    required: True
+  overTime:
+    type: number
+
+startTask:
+  taskIds:
+    type: list
+    required: True
+
+stopTask:
+  taskIds:
+    type: list
+    required: True
+
+
+submitTask:
+  taskId:
+    type: integer
+    required: True
+
+updateRenderEnv: *render_env
+
+updateUserSetting:
+  taskOverTimeSec:
+    required: True
+    type: integer
+
+updateTaskUserLevel:
+  taskId:
+    type: integer
+  taskUserLevel:
+    type: integer

@@ -1,5 +1,6 @@
 """Provide a class for operating project."""
 
+# Import built-in modules
 from pprint import pformat
 
 try:
@@ -20,12 +21,15 @@ class ProjectSettings(object):
         """
         self._connect = connect
 
-    def create_project(self, project_name, status=1):
+    def create_project(self, project_name, status="0"):
         """Create a new project.
 
         Args:
-            project_name (str): Label name.
-            status (int, optional): Label status,0 or 1,default is 1.
+            project_name (str): name of the render project.
+            status (int, optional): The render project init status,
+                0 or 1,default is 0.
+                1: disable
+                0: enable
 
         """
         data = {
@@ -42,7 +46,7 @@ class ProjectSettings(object):
 
         """
         return self._connect.post(self._connect.url.deleteLabel,
-                                  {'delName': project_name})
+                                  {"delName": project_name})
 
     @lru_cache(maxsize=None)
     def _get_project_list(self):
@@ -81,5 +85,5 @@ class ProjectSettings(object):
         """
         return self._get_project_list()["projectNameList"]
 
-    def __repr__(self):
+    def __str__(self):
         return pformat(self.get_projects())

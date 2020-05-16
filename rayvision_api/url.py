@@ -1,3 +1,4 @@
+# Import built-in modules
 from enum import Enum
 
 try:
@@ -23,6 +24,7 @@ def assemble_api_url(domain, api_url, protocol_type='https'):
 
 
 class ApiUrl(str, Enum):
+    """Enumeration type class related to API URL."""
     queryPlatforms = "/api/render/common/queryPlatforms"
     queryUserProfile = "/api/render/user/queryUserProfile"
     queryUserSetting = "/api/render/user/queryUserSetting"
@@ -54,7 +56,7 @@ class ApiUrl(str, Enum):
     updateTaskUserLevel = "/api/rendering/task/renderingTask/updateTaskUserLevel"  # pylint: disable=line-too-long
     getRaySyncUserKey = '/api/render/user/getRaySyncUserKey'
     getTransferServerMsg = '/api/render/task/getTransferServerMsg'
-    loadTaskProcessImg = '/api/render/task/loadTaskProcessImg'
-    setOverTimeStop = '/api/render/task/setOverTimeStop'
+    loadTaskProcessImg = "/api/render/task/loadTaskProcessImg"
+    setOverTimeStop = "/api/render/task/setOverTimeStop"
     loadingFrameThumbnail = '/api/render/task/loadingFrameThumbnail'
     fullSpeed = '/api/render/task/fullSpeed'

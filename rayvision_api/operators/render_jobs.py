@@ -174,10 +174,11 @@ class RenderJobs(object):
 
         """
         data = {
-            'taskId': task_id,
-            'taskUserLevel': priority,
+            "taskId": task_id,
+            "taskUserLevel": priority,
         }
-        return self._connect.post(self._connect.url.updateTaskUserLevel, data)
+        self._connect.post(self._connect.url.updateTaskUserLevel, data)
+        return True
 
     def set_job_overtime_top(self, task_id_list, overtime):
         """Set the task timeout stop time.

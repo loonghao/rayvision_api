@@ -5,27 +5,6 @@ from enum import Enum
 API_VERSION = "1"
 
 
-class SoftWare(Enum):
-    maya = "2000"
-    max = "2001"
-    lightwave = "2002"
-    arnold = "2003"
-    houdini = "2004"
-    cinema4d = "2005"
-    softimage = "2006"
-    blender = "2007"
-    vr_standalone = "2008"
-    mr_standalone = "2009"
-    sketchup = "2010"
-    vue = "2011"
-    keyshot = "2012"
-    clarisse = "2013"
-    octane_render = "2014"
-    katana = "2016"
-
-    @classmethod
-    def items(cls):
-        return cls._member_names_
 
 
 # The name of the package.

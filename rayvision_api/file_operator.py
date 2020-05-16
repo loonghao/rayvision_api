@@ -18,7 +18,7 @@ def read_yaml(file_path):
         dict: The data spec_reader from given YAML file.
 
     """
-    with open(file_path, "r") as file_object:
+    with open(file_path, 'r') as file_object:
         return yaml.safe_load(file_object)
 
 
@@ -57,7 +57,7 @@ def write_json(json_path, data, encoding='utf-8', ensure_ascii=True):
         json.dump(data, f_json, ensure_ascii=ensure_ascii, indent=2)
 
 
-def read_load(json_path, encoding="utf-8"):
+def read_json(json_path, encoding="utf-8"):
     """Load the data from the json file.
 
     Args:

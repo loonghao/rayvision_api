@@ -4,13 +4,13 @@
 import pytest
 
 from rayvision_api.exception import RayvisionAPIError
-from rayvision_api.operators import UserOperator
+from rayvision_api.operators import UserProfile
 
 
 @pytest.fixture()
 def user_operator(rayvision_connect, mock_requests):
     """Get a UserOperator object."""
-    return UserOperator(rayvision_connect)
+    return UserProfile(rayvision_connect, auto_login=False)
 
 
 # pylint: disable=redefined-outer-name
@@ -60,7 +60,6 @@ def test_update_user_setting(user_operator, mock_requests):
     assert 'Update UserOperator setting failed.' in str(str(err.value))
 
 
-
 # pylint: disable=redefined-outer-name
 def test_platforms(user_operator, mock_requests):
     """Test query all render_platforms."""
@@ -102,34 +101,8 @@ def test_all_frame_status(user_operator, mock_requests):
     assert user_operator.ge_all_job_frame_status()['waitingFramesTotal'] == 0
 
 
-def test_supported_software(user_operator, mock_requests):
-    """Test supported_software this interface."""
-    mock_requests(
-        {'data': {
-            'renderInfoList': [
-                {
-                    'cgType': 'ma;mb', 'cgId': 2000, 'isNeedProjectPath': 1,
-                    'isNeedAnalyse': 1, 'iconPath': '/img/softimage/maya.png',
-                    'isSupportLinux': 1, 'cgName': 'Maya'
-                },
-                {
-                    'cgType': 'project;render', 'cgId': 2013,
-                    'isNeedProjectPath': 3,
-                    'isNeedAnalyse': 1,
-                    'iconPath': '/img/softimage/clarisse.png',
-                    'isSupportLinux': 1, 'cgName': 'Clarisse'
-                }],
-            'defaultCgId': 2000,
-            'isAutoCommit': 2,
-        }}
-    )
-    info = user_operator.supported_software()['renderInfoList']
-    assert info[0]['cgName'] == 'Maya'
-    assert info[0]['cgType'] == 'ma;mb'
-
-
 def test_get_transfer_server_msg(user_operator, mock_requests):
-    """Test supported_software this interface."""
+    """Test get_supported_software this interface."""
     mock_requests(
         {'data': {
             'raysyncTransfer': {
@@ -152,13 +125,14 @@ def test_get_transfer_server_msg(user_operator, mock_requests):
 
 
 def test_get_raysync_user_key(user_operator, mock_requests):
-    """Test supported_software this interface."""
+    """Test get_supported_software this interface."""
     mock_requests(
-        {'data': {
-            'raySyncUserKey': '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d',
-            'userName': 'test',
-            'platform': 2,
-        }}
+        {"code": 200,
+         'data': {
+             'raySyncUserKey': '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d',
+             'userName': 'test',
+             'platform': 2,
+         }}
     )
     info = user_operator.get_raysync_user_key()
     assert info['raySyncUserKey'] == '8ccb94d67c1e4c17fd0691c02ab7f753cea64e3d'

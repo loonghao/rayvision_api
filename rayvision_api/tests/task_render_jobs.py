@@ -4,13 +4,14 @@
 import pytest
 
 from rayvision_api.exception import RayvisionAPIError
-from rayvision_api.operators import JobOperator
+from rayvision_api.exception import RayvisionAPIParameterError
+from rayvision_api.operators import RenderJobs
 
 
 @pytest.fixture()
 def fixture_task(rayvision_connect):
     """Get a Task object."""
-    return JobOperator(rayvision_connect)
+    return RenderJobs(rayvision_connect)
 
 
 # pylint: disable=redefined-outer-name
@@ -92,7 +93,7 @@ def test_delete_task(fixture_task, mock_requests):
             'message': 'Delete task failed.'
         }
     )
-    with pytest.raises(RayvisionAPIError) as err:
+    with pytest.raises(RayvisionAPIParameterError) as err:
         task_param_list = ["996463", "462582"]
         fixture_task.delete_task(task_param_list)
     assert 'Delete task failed.' in str(err.value)
@@ -108,10 +109,8 @@ def test_update_task_level(fixture_task, mock_requests, task_id, task_level):
     """Test if code ``601`` error we can get the corresponding error return."""
     mock_requests(
         {
-            'code': 601, 'data': {},
+            'code': 200, 'data': {},
             'message': 'Update task level failed.'
         }
     )
-    with pytest.raises(RayvisionAPIError) as err:
-        fixture_task.update_priority(task_id, task_level)
-    assert 'Update task level failed.' in str(err.value)
+    assert fixture_task.update_priority(task_id, task_level)

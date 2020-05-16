@@ -1,4 +1,6 @@
 """Provides paths related functions."""
+
+# Import built-in modules
 import os
 
 

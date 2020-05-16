@@ -1,6 +1,0 @@
-pageNum:
-  type: integer
-pageSize:
-  type: integer
-statusList:
-  type: list

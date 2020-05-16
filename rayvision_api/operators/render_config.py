@@ -1,4 +1,4 @@
-"""Set the rendering environment configuration."""
+"""Provide functions related to rendering configuration."""
 
 # Import built-in modules
 from enum import Enum
@@ -101,7 +101,7 @@ class RenderConfig(object):
                              config_name,
                              render_layer_type=1,
                              render_system=None,
-                             plugin_ids=[]):
+                             plugin_ids=None):
         """Modify the user rendering environment configuration.
 
         Args:
@@ -124,14 +124,13 @@ class RenderConfig(object):
             # exists.
             config = self.create_render_config(app_name, app_version,
                                                config_name)
-        self._connect.post(self._connect.url.querySupportedPlugin)
         data = {
-            'cgName': app_name,
-            'cgVersion': app_version,
-            'editName': config_name,
-            'renderLayerType': render_layer_type or config["renderLayerType"],
-            'renderSystem': render_system or config["renderSystem"],
-            'pluginIds': plugin_ids or config["renderSystem"],
+            "cgName": app_name,
+            "cgVersion": app_version,
+            "editName": config_name,
+            "renderLayerType": render_layer_type or config["renderLayerType"],
+            "renderSystem": render_system or config["renderSystem"],
+            "pluginIds": plugin_ids or config["pluginIds"],
             "cgId": config["cgId"]
         }
         return self._connect.post(self._connect.url.updateRenderEnv,
@@ -143,11 +142,15 @@ class RenderConfig(object):
         Args:
             config_name (str): The name of the render configuration.
 
+        Returns:
+            bool: If the delete is successful.
+
         """
         data = {
             "editName": config_name
         }
-        return self._connect.post(self._connect.url.deleteRenderEnv, data)
+        self._connect.post(self._connect.url.deleteRenderEnv, data)
+        return True
 
     def set_default_render_config(self, config_name):
         """Set the default render environment configuration.
@@ -157,7 +160,7 @@ class RenderConfig(object):
 
         """
         data = {
-            'editName': config_name
+            "editName": config_name
         }
         return self._connect.post(self._connect.url.setDefaultRenderEnv, data)
 

@@ -37,9 +37,7 @@ def mock_requests(requests_mock, user_info_dict):
             'message': 'There is no response',
         }
         data_.update(data)
-        print '.+{}.+'.format(user_info_dict['domain'])
-        matcher = re.compile('.+{}.+'.format(user_info_dict['domain']))
-        print(matcher)
+        matcher = re.compile(r'.+({}).+'.format(user_info_dict['domain']))
         requests_mock.register_uri("POST", matcher, json=data_)
 
     return _mock_requests
