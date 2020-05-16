@@ -8,7 +8,7 @@ from rayvision_api.operators import UserOperator
 
 
 @pytest.fixture()
-def user_operator(rayvision_connect):
+def user_operator(rayvision_connect, mock_requests):
     """Get a UserOperator object."""
     return UserOperator(rayvision_connect)
 

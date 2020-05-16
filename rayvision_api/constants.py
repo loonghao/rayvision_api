@@ -37,22 +37,6 @@ HEADERS = {
     'Content-Type': 'application/json',
 }
 
-
-CG_SETTING = {
-    'Maya': '2000',
-    'Houdini': '2004',
-    'Katana': '2016',
-    'Clarisse': '2013',
-    'Blender': '2007',
-    '3ds Max': '2001',
-    '2000': 'Maya',
-    '2004': 'Houdini',
-    '2016': 'Katana',
-    '2013': 'Clarisse',
-    '2007': 'Blender',
-    '2001': '3ds Max'
-}
-
 TASK_INFO = {
     'task_info': {
         'enable_layered': '0',
@@ -85,27 +69,3 @@ TASK_INFO = {
     'scene_info': {},
     'scene_info_render': {}
 }
-
-MODIFIABLE_PARAM = [
-    'pre_frames',
-    'input_cg_file',
-    'frames_per_task',
-    'test_frames',
-    'job_stop_time',
-    'task_stop_time',
-    'time_out',
-    'stop_after_test',
-    'tiles_type',
-    'tiles',
-    'is_layer_rendering',
-    'is_distribute_render',
-    'distribute_render_node',
-    'input_project_path',
-    'render_layer_type',
-    'os_name',
-    'ram',
-    'enable_layered',
-]
-
-
-KEYS = ["layers", "scene_info_render", "task_info", "scene_info", "software_config"]

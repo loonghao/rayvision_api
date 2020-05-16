@@ -33,7 +33,8 @@ class Connect(object):
                  domain,
                  render_platform,
                  headers=None,
-                 session=None):
+                 session=None,
+                 hooks=None):
         """Initialize Connect instance.
 
         Args:
@@ -44,6 +45,19 @@ class Connect(object):
             protocol (str, optional): The requests protocol.
             session (requests.Session, optional): The session of the requests
                 instance.
+            hooks (dict, optional): Advanced features that allow us to add
+                custom hooks for post requests.
+                e.g:
+                    def print_resp_url(resp, *args, **kwargs):
+                        print(resp.url)
+
+                    def check_for_errors(resp, *args, **kwargs):
+                        resp.raise_for_status()
+
+                    hooks = {'response': [print_resp_url, check_for_errors]}
+
+        References:
+            https://alexwlchan.net/2017/10/requests-hooks/
 
         """
         self.logger = logging.getLogger(__name__)
@@ -61,7 +75,7 @@ class Connect(object):
         self._headers['accessId'] = access_id
         self._headers['platform'] = self.render_platform
         self._session_request = session or requests.Session()
-        self.record_operations = True
+        self._hooks = hooks or {}
 
     @property
     def headers(self):
@@ -107,13 +121,10 @@ class Connect(object):
         self.logger.debug('HTTP Headers: %s', pformat(headers))
         self.logger.debug('HTTP Body: %s', post_data)
 
-        def print_url(r, *args, **kwargs):
-            print(r.cookies)
-
         response = self._session_request.post(request_address,
                                               post_data,
                                               headers=headers,
-                                              hooks=dict(response=print_url))
+                                              )
         json_response = response.json()
         self.logger.debug('HTTP Response: %s', json_response)
         code = json_response["code"]

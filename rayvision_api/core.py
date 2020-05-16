@@ -4,6 +4,7 @@ import logging
 import os
 from rayvision_log import init_logger
 import requests
+
 try:
     from functools import lru_cache
 except ImportError:
@@ -36,6 +37,19 @@ class RayvisionAPI(object):
             >>> print(ray.user_operator.email)
             >>> print(ray.user_operator.user_id)
 
+            # Add custom hooks.
+            >>> def print_resp_url(resp, *args, **kwargs):
+            ...     print(resp.url)
+
+            >>> def check_for_errors(resp, *args, **kwargs):
+            ...     resp.raise_for_status()
+
+            >>> hooks = {'response': [print_resp_url, check_for_errors]}
+            >>> ray = RayvisionAPI(access_id=api_access_id,
+            ...                    access_key=api_access_key,
+            ...                    hooks=hooks)
+
+
     """
 
     def __init__(self,
@@ -44,7 +58,8 @@ class RayvisionAPI(object):
                  domain='task.renderbus.com',
                  render_platform='4',
                  protocol='https',
-                 logger=None):
+                 logger=None,
+                 hooks=None):
         """Initialize the Rayvision API instance.
 
         Args:
@@ -54,6 +69,19 @@ class RayvisionAPI(object):
             render_platform (str, optional): The platform of renderFarm.
             protocol (str, optional): The requests protocol.
             logger (logging.Logger, optional): The logging logger instance.
+            hooks (dict, optional): Advanced features that allow us to add
+                custom hooks for post requests.
+                e.g:
+                    def print_resp_url(resp, *args, **kwargs):
+                        print(resp.url)
+
+                    def check_for_errors(resp, *args, **kwargs):
+                        resp.raise_for_status()
+
+                    hooks = {'response': [print_resp_url, check_for_errors]}
+
+        References:
+            https://alexwlchan.net/2017/10/requests-hooks/
 
         """
         self.logger = logger
@@ -79,7 +107,8 @@ class RayvisionAPI(object):
                                 protocol,
                                 domain,
                                 render_platform,
-                                session=self._request)
+                                session=self._request,
+                                hooks=hooks)
 
         # Initial all api instance.
         self.user_operator = UserOperator(self._connect)
@@ -97,6 +126,9 @@ class RayvisionAPI(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._request.close()
+
+    def software_list(self):
+        pass
 
     @property
     @lru_cache(maxsize=None)
@@ -146,8 +178,17 @@ class RayvisionAPI(object):
         return self._connect.post(self._connect.url.querySupportedSoftware,
                                   validator=False)
 
+    @property
     @lru_cache(maxsize=2)
-    def supported_plugin(self, name):
+    def default_render_software(self):
+        """dict: The current default render software."""
+        info_list = self.supported_software["renderInfoList"]
+        for info in info_list:
+            if info["cgId"] == self.supported_software["defaultCgId"]:
+                return info
+
+    @lru_cache(maxsize=2)
+    def supported_plugin(self, name, os_name=None):
         """Get supported rendering software plugins.
 
         Args:
@@ -155,6 +196,10 @@ class RayvisionAPI(object):
                 e.g.:
                     maya,
                     houdini
+            os_name (str): The platform of the OS.
+                e.g:
+                    windows
+                    linux
 
         Returns:
             dict: Plugin profile.
@@ -185,7 +230,8 @@ class RayvisionAPI(object):
 
         """
         cg_id = DCC_ID_MAPPINGS[name.strip()]
-        data = {'cgId': cg_id, 'osName': self.connect.system_platform}
+        data = {'cgId': cg_id,
+                'osName': os_name or self.connect.system_platform}
         return self._connect.post(self._connect.url.querySupportedPlugin, data)
 
     def submit(self, task_info, only_id=True):
