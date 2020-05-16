@@ -11,12 +11,13 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 from rayvision_api.connect import Connect
-from rayvision_api.operators import RenderEnvOperator
-from rayvision_api.operators import ProjectOperator
-from rayvision_api.operators import JobOperator
-from rayvision_api.operators import UserOperator
+from rayvision_api.operators import RenderConfig
+from rayvision_api.operators import ProjectSettings
+from rayvision_api.operators import RenderJobs
+from rayvision_api.operators import UserProfile
 from rayvision_api.constants import PACKAGE_NAME
 from rayvision_api.constants import DCC_ID_MAPPINGS
+from rayvision_api.constants import SoftWare
 
 
 class RayvisionAPI(object):
@@ -31,11 +32,11 @@ class RayvisionAPI(object):
             >>> ray = RayvisionAPI(access_id=api_access_id,
             ...                    access_key=api_access_key)
             # Print current user profiles.
-            >>> print(ray.user_operator)
+            >>> print(ray.user_profile)
             # Access profile settings or info like a object.
-            >>> print(ray.user_operator.user_name)
-            >>> print(ray.user_operator.email)
-            >>> print(ray.user_operator.user_id)
+            >>> print(ray.user_profile.user_name)
+            >>> print(ray.user_profile.email)
+            >>> print(ray.user_profile.user_id)
 
             # Add custom hooks.
             >>> def print_resp_url(resp, *args, **kwargs):
@@ -48,7 +49,6 @@ class RayvisionAPI(object):
             >>> ray = RayvisionAPI(access_id=api_access_id,
             ...                    access_key=api_access_key,
             ...                    hooks=hooks)
-
 
     """
 
@@ -85,6 +85,7 @@ class RayvisionAPI(object):
 
         """
         self.logger = logger
+
         if not self.logger:
             init_logger(PACKAGE_NAME)
             self.logger = logging.getLogger(__name__)
@@ -101,7 +102,11 @@ class RayvisionAPI(object):
                 'Required "access_key" not specified. Pass as argument or set '
                 'in environment variable RAYVISION_API_KEY.'
             )
+
+        # Initialize the session instance.
         self._request = requests.Session()
+
+        # Create a connection.
         self._connect = Connect(access_id,
                                 access_key,
                                 protocol,
@@ -110,11 +115,11 @@ class RayvisionAPI(object):
                                 session=self._request,
                                 hooks=hooks)
 
-        # Initial all api instance.
-        self.user_operator = UserOperator(self._connect)
-        self.job_operator = JobOperator(self._connect)
-        self.project_operator = ProjectOperator(self._connect)
-        self.render_env_operator = RenderEnvOperator(self._connect)
+        # Initialize all instances of api operators.
+        self.user_profile = UserProfile(self._connect)
+        self.render_jobs = RenderJobs(self._connect)
+        self.project = ProjectSettings(self._connect)
+        self.render_config = RenderConfig(self._connect)
 
     @property
     def connect(self):
@@ -241,4 +246,4 @@ class RayvisionAPI(object):
             task_info (dict): Task id.
 
         """
-        return self.job_operator.submit_task(task_info)
+        return self.render_jobs.submit_task(task_info)

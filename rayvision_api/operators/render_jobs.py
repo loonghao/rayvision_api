@@ -7,7 +7,7 @@ except ImportError:
 from rayvision_api.exception import RayvisionError
 
 
-class JobOperator(object):
+class RenderJobs(object):
     """API task related operations."""
 
     TASK_PARAM = "taskIds"

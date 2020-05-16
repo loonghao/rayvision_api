@@ -10,7 +10,7 @@ from rayvision_api.exception import RayvisionError
 from rayvision_api.signature import hump2underline
 
 
-class UserOperator(object):
+class UserProfile(object):
     """API user information operator."""
 
     def __init__(self, connect):
@@ -238,7 +238,7 @@ class UserOperator(object):
     @lru_cache(maxsize=2)
     def __getattribute__(self, attribute):
         """Get an attribute's value and perform deferred loading once."""
-        _getattr = super(UserOperator, self).__getattribute__
+        _getattr = super(UserProfile, self).__getattribute__
         try:
             value = _getattr(attribute)
         except AttributeError:

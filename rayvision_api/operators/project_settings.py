@@ -8,7 +8,7 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 
-class ProjectOperator(object):
+class ProjectSettings(object):
     """The operator of the Project."""
 
     def __init__(self, connect):
@@ -29,8 +29,8 @@ class ProjectOperator(object):
 
         """
         data = {
-            'newName': project_name,
-            'status': status
+            "newName": project_name,
+            "status": status
         }
         return self._connect.post(self._connect.url.addLabel, data)
 

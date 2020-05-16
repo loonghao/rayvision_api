@@ -1,11 +1,16 @@
 # Import built-in modules
 from pprint import pformat
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
 
 # Import third-party modules
 from cerberus import Validator
 
 # Import local modules
 from rayvision_api.file_operator import read_yaml
+from rayvision_api.constants import API_VERSION
 from rayvision_api.paths import get_schema_file
 
 
@@ -15,17 +20,18 @@ class DataValidator(object):
     def __init__(self, data, schema_name, schema=None):
         self._data = data
         self._schema_name = schema_name
-        self._api_version = data.get("api_version", 1)
+        self._api_version = API_VERSION
         self._schema = schema or self._get_schema()
 
+    @lru_cache(maxsize=2)
     def _get_schema(self):
         """dict: get the schema form current api version."""
-        file_path = get_schema_file(self._schema_name)
+        file_path = get_schema_file("schema_v{}".format(self._api_version))
         try:
             return read_yaml(file_path)
         except IOError:
             raise ValueError("No schema found that matches the current"
-                             " {}.".format(self._schema_name))
+                             " version {} of api.".format(self._api_version))
 
     def validate(self, ignore_required=False):
         """Validate itself against the internal schema.
@@ -38,7 +44,7 @@ class DataValidator(object):
             ValueError: If validation fails.
 
         """
-        validator = Validator(self._schema)
+        validator = Validator(self._schema[self._schema_name])
         validator.allow_unknown = True
 
         def _validate(dict_, update):

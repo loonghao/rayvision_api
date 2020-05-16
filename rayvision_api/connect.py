@@ -82,9 +82,9 @@ class Connect(object):
         """Get request headers dic."""
         return self._headers
 
-    @retry(reraise=True, stop=stop_after_attempt(5),
-           retry=retry_if_exception_type(RayvisionAPIError),
-           wait=wait_random(min=1, max=2))
+    # @retry(reraise=True, stop=stop_after_attempt(5),
+    #        retry=retry_if_exception_type(RayvisionAPIError),
+    #        wait=wait_random(min=1, max=2))
     def post(self, api_url, post_data=None, validator=True):
         """Send an post request and return data object if no error occurred.
 
@@ -120,7 +120,7 @@ class Connect(object):
         self.logger.debug('POST: %s', request_address)
         self.logger.debug('HTTP Headers: %s', pformat(headers))
         self.logger.debug('HTTP Body: %s', post_data)
-
+        print request_address
         response = self._session_request.post(request_address,
                                               post_data,
                                               headers=headers,
