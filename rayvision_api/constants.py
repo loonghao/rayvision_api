@@ -1,11 +1,7 @@
 """The constants of the rayvision_api."""
-from enum import Enum
 
 # The version of current api.
 API_VERSION = "1"
-
-
-
 
 # The name of the package.
 PACKAGE_NAME = 'rayvision_api'
