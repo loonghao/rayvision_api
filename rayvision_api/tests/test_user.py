@@ -88,19 +88,6 @@ def test_get_task_list(user_operator, mock_requests):
     assert 'Get task failed.' in str(err.value)
 
 
-def test_all_frame_status(user_operator, mock_requests):
-    """Test that we can go to all frame states."""
-    mock_requests(
-        {'code': 200,
-         'data': {
-             'executingFramesTotal': 0, 'doneFramesTotal': 11,
-             'failedFramesTotal': 230, 'waitingFramesTotal': 0,
-             'totalFrames': 241,
-         }})
-    assert user_operator.ge_all_job_frame_status()['totalFrames'] == 241
-    assert user_operator.ge_all_job_frame_status()['waitingFramesTotal'] == 0
-
-
 def test_get_transfer_server_msg(user_operator, mock_requests):
     """Test get_supported_software this interface."""
     mock_requests(

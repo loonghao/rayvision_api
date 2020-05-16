@@ -318,7 +318,7 @@ class RenderJobs(object):
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
     @lru_cache(maxsize=2)
-    def ge_all_job_frame_status(self):
+    def get_all_job_frame_status(self):
         """Get the overview of task rendering frame.
 
         Returns:
@@ -434,7 +434,7 @@ class RenderJobs(object):
         data = {
             'taskIds': task_ids_list
         }
-        return self._connect.post(self._connect.queryTaskInfo, data)
+        return self._connect.post(self._connect.url.queryTaskInfo, data)
 
     @lru_cache(maxsize=2)
     def error_detail(self, code, language='0'):
