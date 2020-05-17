@@ -292,7 +292,7 @@ class RenderJobs(object):
         }
         return self._connect.post(self._connect.url.restartFailedFrames, data)
 
-    def restart_frame(self, job_id, select_all, ids_list=[]):
+    def restart_frame(self, job_id, select_all, ids_list=None):
         """Re-submit the specified frame.
 
         Args:
@@ -306,7 +306,7 @@ class RenderJobs(object):
         data = {
             "taskIds": job_id,
             "selectAll": select_all,
-            "ids": ids_list
+            "ids": ids_list or []
         }
         return self._connect.post(self._connect.url.restartFrame, data)
 

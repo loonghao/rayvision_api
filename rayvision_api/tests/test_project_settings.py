@@ -3,7 +3,6 @@
 # pylint: disable=import-error
 import pytest
 
-from rayvision_api.exception import RayvisionAPIError
 from rayvision_api.operators import ProjectSettings
 
 
@@ -16,9 +15,7 @@ def fixture_project(rayvision_connect):
 # pylint: disable=redefined-outer-name
 def test_add_project(fixture_project, mock_requests, mocker):
     """Test if code ``504`` error we can get the corresponding error return."""
-    return_value = {
-        'code': 200, 'data': {},
-    }
+    return_value = {'code': 200, 'data': {}}
     mock_requests(return_value)
     new_name = "my_test_project"
     mock_project = mocker.patch.object(fixture_project, "get_projects")
@@ -31,12 +28,7 @@ def test_add_project(fixture_project, mock_requests, mocker):
 
 def test_delete_project(fixture_project, mock_requests):
     """Test if code ``404`` error we can get the corresponding error return."""
-    mock_requests(
-        {
-            'code': 200, 'data': {},
-            'message': 'Delete lable failed.'
-        }
-    )
+    mock_requests({'code': 200, 'data': {}, 'message': 'Delete lable failed.'})
     assert fixture_project.delete_project("my_render_project")
 
 

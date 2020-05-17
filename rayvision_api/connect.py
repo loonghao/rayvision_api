@@ -8,10 +8,6 @@ from pprint import pformat
 import platform
 import time
 import requests
-from tenacity import retry
-from tenacity import stop_after_attempt
-from tenacity import wait_random
-from tenacity import retry_if_exception_type
 
 # Import local modules
 from rayvision_api.constants import HEADERS
@@ -82,9 +78,6 @@ class Connect(object):
         """Get request headers dic."""
         return self._headers
 
-    # @retry(reraise=True, stop=stop_after_attempt(5),
-    #        retry=retry_if_exception_type(RayvisionAPIError),
-    #        wait=wait_random(min=1, max=2))
     def post(self, api_url, post_data=None, validator=True):
         """Send an post request and return data object if no error occurred.
 
