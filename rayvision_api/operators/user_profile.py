@@ -5,7 +5,6 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 from pprint import pformat
-from future.moves.urllib.error import HTTPError
 from rayvision_api.exception import RayvisionError
 from rayvision_api.signature import hump2underline
 
@@ -27,10 +26,7 @@ class UserProfile(object):
             "platform": connect.render_platform,
         }
         if auto_login:
-            try:
-                self._login()
-            except HTTPError:
-                raise RayvisionError(20020, "Login failed.")
+            self._login()
 
     @property
     def profile(self):
