@@ -51,7 +51,6 @@ class RayvisionAPI(object):
             ...                    hooks=hooks)
 
     """
-
     def __init__(self,
                  access_id=None,
                  access_key=None,
@@ -162,4 +161,4 @@ class RayvisionAPI(object):
             task_info (dict): Task id.
 
         """
-        return self.render_jobs.submit_task(task_info)
+        return self.render_jobs.submit_job(task_info)

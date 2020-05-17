@@ -21,22 +21,19 @@ class ProjectSettings(object):
         """
         self._connect = connect
 
-    def create_project(self, project_name, status="0"):
+    def create_project(self, project_name):
         """Create a new project.
 
         Args:
             project_name (str): name of the render project.
-            status (int, optional): The render project init status,
-                0 or 1,default is 0.
-                1: disable
-                0: enable
 
         """
         data = {
             "newName": project_name,
-            "status": status
+            "status": "0"
         }
-        return self._connect.post(self._connect.url.addLabel, data)
+        self._connect.post(self._connect.url.addLabel, data)
+        return self.get_project_by_name(project_name)
 
     def delete_project(self, project_name):
         """Delete the project by given name.
@@ -45,8 +42,9 @@ class ProjectSettings(object):
             project_name (str): The name of the label to be deleted.
 
         """
-        return self._connect.post(self._connect.url.deleteLabel,
-                                  {"delName": project_name})
+        self._connect.post(self._connect.url.deleteLabel,
+                           {"delName": project_name})
+        return True
 
     @lru_cache(maxsize=None)
     def _get_project_list(self):
@@ -84,6 +82,14 @@ class ProjectSettings(object):
 
         """
         return self._get_project_list()["projectNameList"]
+
+    def get_project_by_name(self, project_name):
+        for project in self.get_projects():
+            if project_name == project["projectName"]:
+                return project
+        raise ValueError(
+            "No corresponding project found '{}'".format(project_name)
+        )
 
     def __str__(self):
         return pformat(self.get_projects())

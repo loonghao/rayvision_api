@@ -41,7 +41,7 @@ with RayvisionAPI(access_id=api_access_id,
     # Access profile settings or info like a object.
     print(ray.user_profile.user_name)
     print(ray.user_profile.email)
-    print(ray.user_operator.user_id)
+    print(ray.user_profile.user_id)
 
 ```
 Add custom request hooks for the api.
@@ -82,7 +82,7 @@ print(ray.user_profile)
 # Access profile settings or info like a object.
 print(ray.user_profile.user_name)
 print(ray.user_profile.email)
-print(ray.user_operator.user_id)
+print(ray.user_profile.user_id)
 
 ```
 

@@ -14,18 +14,19 @@ def fixture_project(rayvision_connect):
 
 
 # pylint: disable=redefined-outer-name
-def test_add_project(fixture_project, mock_requests):
+def test_add_project(fixture_project, mock_requests, mocker):
     """Test if code ``504`` error we can get the corresponding error return."""
-    mock_requests(
-        {
-            'code': 200, 'data': {},
-            'message': 'Add lable failed.'
-        }
-    )
-    # with pytest.raises(RayvisionAPIError) as err:
+    return_value = {
+        'code': 200, 'data': {},
+    }
+    mock_requests(return_value)
     new_name = "my_test_project"
-    status = "0"
-    assert fixture_project.create_project(new_name, status)
+    mock_project = mocker.patch.object(fixture_project, "get_projects")
+    mock_project.return_value = [
+        {u'projectId': 361971, u'projectName': u'my_test_project'},
+        {u'projectId': 258871, u'projectName': u'build_test'}]
+    new_project = fixture_project.create_project(new_name)
+    assert new_project["projectName"] == new_name
 
 
 def test_delete_project(fixture_project, mock_requests):

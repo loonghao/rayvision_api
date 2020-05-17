@@ -40,7 +40,7 @@ def test_submit_task(fixture_render_jobs, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         task_id = 564642
-        fixture_render_jobs.submit_task(task_id)
+        fixture_render_jobs.submit_job(task_id)
     assert 'Submit task failed.' in str(err.value)
 
 
@@ -54,7 +54,7 @@ def test_stop_task(fixture_render_jobs, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         task_param_list = ["336463", "469733"]
-        fixture_render_jobs.stop_task(task_param_list)
+        fixture_render_jobs.stop_jobs(task_param_list)
     assert 'Stop task failed.' in str(err.value)
 
 
@@ -68,7 +68,7 @@ def test_start_task(fixture_render_jobs, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         task_param_list = ["456463", "469633"]
-        fixture_render_jobs.start_task(task_param_list)
+        fixture_render_jobs.start_jobs(task_param_list)
     assert 'Start task failed.' in str(err.value)
 
 
@@ -82,7 +82,7 @@ def test_abort_task(fixture_render_jobs, mock_requests):
     )
     with pytest.raises(RayvisionAPIError) as err:
         task_param_list = ["456463", "462582"]
-        fixture_render_jobs.abort_task(task_param_list)
+        fixture_render_jobs.abort_jobs(task_param_list)
     assert 'Abort task failed.' in str(err.value)
 
 
@@ -96,16 +96,14 @@ def test_delete_task(fixture_render_jobs, mock_requests):
     )
     with pytest.raises(RayvisionAPIParameterError) as err:
         task_param_list = ["996463", "462582"]
-        fixture_render_jobs.delete_task(task_param_list)
+        fixture_render_jobs.delete_jobs(task_param_list)
     assert 'Delete task failed.' in str(err.value)
 
 
-@pytest.mark.parametrize('task_id, task_level', [
-    (661616, 20),
-    (661216, -20),
-    (6616, 120),
-    (6616, 500),
-])
+@pytest.mark.parametrize('task_id, task_level',
+                         [
+                             ("661616", 120),
+                         ])
 def test_update_job_priority(fixture_render_jobs, mock_requests, task_id,
                              task_level):
     """Test if code ``601`` error we can get the corresponding error return."""
@@ -115,7 +113,8 @@ def test_update_job_priority(fixture_render_jobs, mock_requests, task_id,
             'message': 'Update task level failed.'
         }
     )
-    assert fixture_render_jobs.update_priority(task_id, task_level)
+    with pytest.raises(ValueError):
+        fixture_render_jobs.update_priority(task_id, task_level)
 
 
 def test_all_frame_status(fixture_render_jobs, mock_requests):
@@ -130,3 +129,12 @@ def test_all_frame_status(fixture_render_jobs, mock_requests):
     job_status = fixture_render_jobs.get_all_job_frame_status()
     assert job_status['totalFrames'] == 241
     assert job_status['waitingFramesTotal'] == 0
+
+
+def test_error_detail(fixture_render_jobs, mock_requests):
+    """Test we can get correct error message."""
+    mock_requests({'code': 200, 'data': [{'code': 12345,
+                                          'solutionPath': 'c:/tests.com'}]})
+    details = fixture_render_jobs.error_detail(12345)
+    assert details[0]['code'] == 12345
+    assert details[0]['solutionPath'] == 'c:/tests.com'

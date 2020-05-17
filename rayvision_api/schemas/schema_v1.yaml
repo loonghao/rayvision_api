@@ -73,7 +73,7 @@ getTransferServerMsg:
 
 loadingFrameThumbnail:
   id:
-    type: integer
+    type: string
     required: True
   frameStatus:
     type: integer
@@ -81,7 +81,7 @@ loadingFrameThumbnail:
 
 loadTaskProcessImg:
   taskId:
-    type: integer
+    type: string
   frameType:
     type: integer
 
@@ -91,7 +91,7 @@ queryErrorDetail:
     required: True
     type: integer
   language:
-    type: integer
+    type: string
 
 queryPlatforms:
   zone:
@@ -113,9 +113,10 @@ querySupportedSoftware:
 
 queryTaskFrames:
   taskId:
-    type: integer
+    type: string
+    required: True
   searchKeyword:
-    type: integer
+    type: string
   pageNum:
     type: integer
   pageSize:
@@ -132,7 +133,7 @@ restartFailedFrames:
 
 restartFrame:
   taskIds:
-    type: ingeter
+    type: list
   ids:
     type: list
   selectAll:
@@ -162,7 +163,7 @@ stopTask:
 
 submitTask:
   taskId:
-    type: integer
+    type: string
     required: True
 
 updateRenderEnv: *render_env
@@ -174,6 +175,6 @@ updateUserSetting:
 
 updateTaskUserLevel:
   taskId:
-    type: integer
+    type: string
   taskUserLevel:
     type: integer

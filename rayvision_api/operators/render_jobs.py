@@ -4,8 +4,6 @@ try:
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
-from rayvision_api.exception import RayvisionError
-
 
 class RenderJobs(object):
     """API task related operations."""
@@ -77,8 +75,6 @@ class RenderJobs(object):
             return self._task_id
         task_id_info = self._create_task(count=1, out_user_id=None)
         task_id_list = task_id_info.get("taskIdList")
-        if not task_id_list:
-            raise RayvisionError(1000000, 'Failed to create task number!')
         self._task_id = task_id_list[0]
         self._has_submit = False
         return self._task_id
@@ -95,15 +91,15 @@ class RenderJobs(object):
         """
         return self._generate_task_id()
 
-    def submit_task(self,
-                    info,
-                    asset_lsolation_model=None,
-                    out_user_id=None,
-                    only_id=False):
+    def submit_job(self,
+                   job_info,
+                   asset_lsolation_model=None,
+                   out_user_id=None,
+                   only_id=False):
         """Submit a task to rayvision render farm.
 
         Args:
-            task_id (int): Submit task ID.
+            job_info (dict): The info of the render job.
             asset_lsolation_model (str): Asset isolation type, Optional value,
                 default is null, optional value:'TASK_ID_MODEL' or 'OUT_USER_MODEL'.
             out_user_id (str): The asset isolates the user ID, Optional value,
@@ -118,63 +114,65 @@ class RenderJobs(object):
             data["assetIsolationModel"] = asset_lsolation_model
         if out_user_id:
             data["outUserId"] = out_user_id.strip()
-        data.update(info)
+        data.update(job_info)
         task_info = self._connect.post(self._connect.url.submitTask, data)
         if only_id:
             return self.task_id
         self._has_submit = True
         return task_info
 
-    def stop_task(self, task_param_list):
+    def stop_jobs(self, jobs_id):
         """Stop the task.
 
         Args:
-            task_param_list (list): Task ID list.
+            jobs_id (list of str): The jobs id.
 
         """
         return self._connect.post(self._connect.url.stopTask,
-                                  {self.TASK_PARAM: task_param_list})
+                                  {self.TASK_PARAM: jobs_id})
 
-    def start_task(self, task_param_list):
-        """Start task.
+    def start_jobs(self, jobs_id):
+        """Start rendering the jobs.
 
         Args:
-            task_param_list (list): Task ID list.
+            jobs_id (list of str): The jobs id.
 
         """
         return self._connect.post(self._connect.url.startTask,
-                                  {self.TASK_PARAM: task_param_list})
+                                  {self.TASK_PARAM: jobs_id})
 
-    def abort_task(self, task_param_list):
+    def abort_jobs(self, jobs_id):
         """Give up the task.
 
         Args:
-            task_param_list (list): Task ID list.
+            jobs_id (list of str): The jobs id.
 
         """
         return self._connect.post(self._connect.url.abortTask,
-                                  {self.TASK_PARAM: task_param_list})
+                                  {self.TASK_PARAM: jobs_id})
 
-    def delete_task(self, task_param_list):
-        """Delete task.
+    def delete_jobs(self, jobs_id):
+        """Delete the render jobs by given jobs id.
 
         Args:
-            task_param_list (list): Task ID list.
+            jobs_id (list of str): The jobs id.
 
         """
         return self._connect.post(self._connect.url.deleteTask,
-                                  {self.TASK_PARAM: task_param_list})
+                                  {self.TASK_PARAM: jobs_id})
 
-    def update_priority(self, task_id, priority):
+    def update_priority(self, job_id, priority):
         """Update the render priority for the task by given task id.
 
         Args:
-            task_id (int): The ID number of the render task.
-            priority (int): The priority for the current render task.
+            job_id (str): The ID of the render job.
+            priority (int): The priority for the current render job.
 
         """
+        if priority > 100:
+            raise ValueError("The priority value must be 0-99.")
         data = {
-            "taskId": task_id,
+            "taskId": job_id,
             "taskUserLevel": priority,
         }
         self._connect.post(self._connect.url.updateTaskUserLevel, data)
@@ -196,7 +194,8 @@ class RenderJobs(object):
             'taskIds': task_id_list,
             'overTime': overtime
         }
-        return self._connect.post(self._connect.url.setOverTimeStop, data)
+        self._connect.post(self._connect.url.setOverTimeStop, data)
+        return True
 
     def set_full_speed_render(self, task_id_list):
         """Full to render.
@@ -211,66 +210,11 @@ class RenderJobs(object):
         data = {
             'taskIds': task_id_list,
         }
-        return self._connect.post(self._connect.url, data)
+        self._connect.post(self._connect.url, data)
+        return True
 
     @lru_cache(maxsize=2)
-    def get_task_list(self, page_num=1, page_size=2, status_list=None,
-                      search_keyword=None,
-                      start_time=None, end_time=None):
-        """Get task list.
-
-        An old to the new row, the old one.
-
-        Args:
-            page_num (int): Required value, current page.
-            page_size (int): Required value, numbers displayed per page.
-            status_list (list of int): status code list, query the status of
-                the task in the list.
-            search_keyword (string): Optional, scenario name or job ID.
-            start_time (string): Optional, search limit for start time.
-            end_time (string): Optional, search limit for end time.
-
-        Returns:
-            dict: Task profile, please see the documentation for details.
-                e.g.:
-                    {
-                        "pageCount": 32,
-                        "pageNum": 1,
-                        "total": 32,
-                        "size": 1,
-                        "items": [
-                            {
-                                "sceneName": "",
-                                "id": 18278,
-                                "taskAlias": "P18278",
-                                "taskStatus": 0,
-                                "statusText": "render_task_status_0",
-                                "preTaskStatus": 25,
-                                "preStatusText": "render_task_status_25",
-                                "totalFrames": 0,
-                                "abortFrames": null,
-                                "executingFrames": null,
-                            },
-                        ]
-                    }
-
-        """
-        data = {
-            'pageNum': page_num,
-            'pageSize': page_size
-        }
-        if status_list:
-            data['statusList'] = status_list
-        if search_keyword:
-            data['searchKeyword'] = search_keyword
-        if start_time:
-            data['startTime'] = start_time
-        if end_time:
-            data['endTime'] = end_time
-        return self._connect.post(self._connect.url.queryTaskFrames, data)
-
-    @lru_cache(maxsize=2)
-    def get_task_frames(self, task_id, page_num, page_size,
+    def get_task_frames(self, task_id, page_num=1, page_size=1,
                         search_keyword=None):
         """Get task rendering frame details.
 
@@ -309,12 +253,12 @@ class RenderJobs(object):
 
         """
         data = {
-            'taskId': task_id,
-            'pageNum': page_num,
-            'pageSize': page_size
+            "taskId": task_id,
+            "pageNum": page_num,
+            "pageSize": page_size
         }
         if search_keyword:
-            data['searchKeyword'] = search_keyword
+            data["searchKeyword"] = search_keyword
         return self._connect.post(self._connect.url.queryTaskFrames, data)
 
     @lru_cache(maxsize=2)
@@ -336,52 +280,45 @@ class RenderJobs(object):
         return self._connect.post(self._connect.url.queryAllFrameStats,
                                   validator=False)
 
-    def restart_failed_frames(self, task_param_list):
+    def restart_failed_frames(self, job_ids):
         """Re-submit the failed frame.
 
         Args:
-            task_param_list (list of str): Task ID list.
+            job_ids (list of str): Task ID list.
 
         """
         data = {
-            "taskIds": task_param_list
+            "taskIds": job_ids
         }
         return self._connect.post(self._connect.url.restartFailedFrames, data)
 
-    def restart_frame(self, task_id, select_all, ids_list=None):
+    def restart_frame(self, job_id, select_all, ids_list=[]):
         """Re-submit the specified frame.
 
         Args:
-            task_id (int): Task ID number.
-            ids_list (list, optional): Frame ID list, valid when select_all is
-                0.
+            job_id (int): The render job ID number.
             select_all (int): Whether to re-request all,
                 1 all re-raised, 0 specified frame re-request.
+            ids_list (list, optional): Frame ID list, valid when select_all is
+                0.
 
         """
         data = {
-            'taskIds': task_id,
-            'selectAll': select_all
+            "taskIds": job_id,
+            "selectAll": select_all,
+            "ids": ids_list
         }
-        if bool(ids_list):
-            if isinstance(ids_list, list):
-                data['ids'] = ids_list
-            else:
-                raise TypeError("ids_list must be list type")
-        else:
-            data['ids'] = []
-
         return self._connect.post(self._connect.url.restartFrame, data)
 
     @lru_cache(maxsize=2)
-    def get_job_info(self, task_ids_list):
+    def get_job_info(self, jobs_id):
         """Get task details.
 
         Args:
-            task_ids_list (list of int): Shell task ID list.
+            jobs_id (list of int): The id of the render jobs.
 
         Returns:
-            dict: Task details.
+            dict: The job details.
                 e.g.:
                     {
                         "pageCount": 1,
@@ -431,9 +368,7 @@ class RenderJobs(object):
                     }
 
         """
-        data = {
-            'taskIds': task_ids_list
-        }
+        data = {"taskIds": jobs_id}
         return self._connect.post(self._connect.url.queryTaskInfo, data)
 
     @lru_cache(maxsize=2)
@@ -470,29 +405,32 @@ class RenderJobs(object):
 
         """
         data = {
-            'code': code,
-            'language': language
+            "code": code,
+            "language": language
         }
         return self._connect.post(self._connect.url.queryErrorDetail, data)
 
     @lru_cache(maxsize=2)
-    def get_task_processing_img(self, task_id, frame_type=None):
-        """Get the task progress diagram,currently only Max software is supported.
+    def get_job_processing_img(self, job_id, frame_type=None):
+        """Get the task progress diagram,
+
+        Notes:
+            Currently only Max software is supported.
 
         Args:
-            task_id (int): Task id.
+            job_id (int): The id of the render job.
             frame_type (int): Apply colours to a drawing type, nonessential 2
                 represents the photon frame, 5 gets the main picture progress,
                 and returns the result dynamically according to the stage of
                 the rendering task
-            Example:
-                {
-                    "taskId":389406
-                }
+                e.g:
+                    {
+                        "taskId":389406
+                    }
 
-        Returns: Task progress diagram information
-            dict:
-                Example:
+        Returns:
+            dict: Task progress diagram information.
+                e.g.:
                     {
                         "block":16,
                         "currentTaskType":"Render",
@@ -523,18 +461,18 @@ class RenderJobs(object):
 
         """
         data = {
-            "taskId": task_id
+            "taskId": job_id
         }
         if frame_type:
             data["frameType"] = frame_type
         return self._connect.post(self._connect.url.loadTaskProcessImg, data)
 
     @lru_cache(maxsize=2)
-    def get_frame_thumbnall(self, frame_id, frame_status=4):
-        """Load thumbnail.
+    def get_thumbnail_by_frame(self, frame_id, frame_status=4):
+        """Get the thumbnail by frame.
 
         Args:
-            frame_id (int): Frame id.
+            frame_id (int): The id of the frame of the render job.
             frame_status (int): State of the frame, only complete with
                 thumbnails.
 
