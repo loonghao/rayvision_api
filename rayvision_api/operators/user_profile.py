@@ -1,11 +1,14 @@
 """Interface to operate the user."""
+
+# Import built-in modules
 try:
     from functools import lru_cache
 except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 from pprint import pformat
-from rayvision_api.exception import RayvisionError
+
+# Import local modules
 from rayvision_api.signature import hump2underline
 
 

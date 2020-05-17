@@ -14,4 +14,5 @@ PyYAML==5.3.1
 rayvision_log>=0.3.3
 requests==2.23.0
 requests_mock==1.8.0
+pytest_mock==2.0.0
 
