@@ -3,6 +3,7 @@ try:
     from functools import lru_cache
 except ImportError:
     from backports.functools_lru_cache import lru_cache
+import json
 
 
 class RenderJobs(object):
@@ -89,7 +90,7 @@ class RenderJobs(object):
             class instance.
 
         """
-        return self._generate_task_id()
+        return str(self._generate_task_id())
 
     def submit_job(self,
                    job_info,
@@ -110,11 +111,7 @@ class RenderJobs(object):
         data = {
             "taskId": self.task_id
         }
-        if asset_lsolation_model:
-            data["assetIsolationModel"] = asset_lsolation_model
-        if out_user_id:
-            data["outUserId"] = out_user_id.strip()
-        data.update(job_info)
+        self._post_json(job_info)
         task_info = self._connect.post(self._connect.url.submitTask, data)
         if only_id:
             return self.task_id
@@ -490,3 +487,12 @@ class RenderJobs(object):
         }
         return self._connect.post(self._connect.url.loadingFrameThumbnail,
                                   data)
+
+    def _post_json(self, json_content):
+        data = {
+            "taskId": self.task_id,
+            "fileName": "task.json",
+            "content": json.dumps(json_content),
+        }
+        return self._connect.post(self._connect.url.taskJsonFile,
+                                  data, validator=False)

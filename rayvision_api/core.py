@@ -18,6 +18,7 @@ from rayvision_api.operators import ProjectSettings
 from rayvision_api.operators import RenderJobs
 from rayvision_api.operators import UserProfile
 from rayvision_api.constants import PACKAGE_NAME
+from rayvision_api.validator import DataValidator
 
 
 class RayvisionAPI(object):
@@ -51,6 +52,7 @@ class RayvisionAPI(object):
             ...                    hooks=hooks)
 
     """
+
     def __init__(self,
                  access_id=None,
                  access_key=None,
@@ -154,11 +156,16 @@ class RayvisionAPI(object):
         return self._connect.post(self._connect.url.queryPlatforms,
                                   {'zone': zone})
 
-    def submit(self, task_info, only_id=True):
+    def submit(self, submit_type, task_info, only_id=True):
         """Submit a task.
 
         Args:
             task_info (dict): Task id.
 
         """
-        return self.render_jobs.submit_job(task_info)
+        if submit_type not in ("maya", "houdini", "houdini"):
+            raise ValueError("Unsupported type of submit "
+                             "({})".format(submit_type))
+        validator = DataValidator(task_info, submit_type)
+        validator.validate()
+        return self.render_jobs.submit_job(task_info, only_id=only_id)

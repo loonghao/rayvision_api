@@ -16,7 +16,7 @@ addRenderEnv: &render_env
     type: string
   cgVersion:
     type: string
-  renderLayerType:
+  render_layer_type:
     type: integer
   editName:
     type: string
@@ -178,3 +178,318 @@ updateTaskUserLevel:
     type: string
   taskUserLevel:
     type: integer
+
+maya:
+  software_config:
+    type: dict
+    allowed:
+      - cg_name
+      - cg_version
+      - plugins
+  task_info:
+    type: dict
+    allowed:
+      - is_layer_rendering
+      - cg_id
+      - ram
+      - os_name
+      - render_layer_type
+      - is_distribute_render
+      - input_cg_file
+      - job_stop_time
+      - user_id
+      - pre_frames
+      - platform
+      - is_picture
+      - project_id
+      - channel
+      - tiles_type
+      - tiles
+      - project_name
+      - distributerendernode
+      - framespertask
+      - stopaftertest
+      - inputprojectpath
+      - task_id
+      - taskstoptime
+      - time_out
+  scene_info_render:
+    type: dict
+    schema:
+      layer:
+        required: true
+        type: dict
+        schema:
+          common:
+            type: dict
+            image_format:
+              type: string
+            end:
+              type: string
+            width:
+              type: string
+            imagefileprefix:
+              type: string
+            all_camera:
+              type: string
+            render_camera:
+              type: string
+            start:
+              type: string
+            animation:
+              type: string
+            renderer:
+              type: string
+            frames:
+              type: string
+            height:
+              type: string
+            renumber_frames:
+              type: string
+            by_frame:
+              type: string
+
+houdini:
+  software_config:
+    type: dict
+    cg_name:
+      type: string
+    cg_version:
+      type: string
+    plugins:
+      type: dict
+  task_info:
+    type: dict
+    is_layer_rendering:
+      type: string
+    cg_id:
+      type: string
+    ram:
+      type: string
+    os_name:
+      type: string
+    render_layer_type:
+      type: string
+    is_distribute_render:
+      type: string
+    input_cg_file:
+      type: string
+    job_stop_time:
+      type: string
+    user_id:
+      type: string
+    pre_frames:
+      type: string
+    platform:
+      type: string
+    is_picture:
+      type: string
+    project_id:
+      type: string
+    channel:
+      type: string
+    tiles_type:
+      type: string
+    tiles:
+      type: string
+    project_name:
+      type: string
+    distributerendernode:
+      type: string
+    framespertask:
+      type: string
+    stopaftertest:
+      type: string
+    inputprojectpath:
+      type: string
+    task_id:
+      type: string
+    taskstoptime:
+      type: string
+    time_out:
+      type: string
+  scene_info_render:
+    type: dict
+    rop_node:
+      type: dict
+      node:
+        type: string
+      frames:
+        type: string
+      option:
+        type: string
+      render:
+        type: string
+
+    geo_node:
+      type: dict
+      node:
+        type: string
+      frames:
+        type: string
+      option:
+        type: string
+      render:
+        type: string
+
+clarisse:
+  software_config:
+    type: dict
+    cg_name:
+      type: string
+    cg_version:
+      type: string
+    plugins:
+      type: string
+  task_info:
+    type: dict
+    is_layer_rendering:
+      type: string
+    cg_id:
+      type: string
+    ram:
+      type: string
+    os_name:
+      type: string
+    render_layer_type:
+      type: string
+    is_distribute_render:
+      type: string
+    input_cg_file:
+      type: string
+    job_stop_time:
+      type: string
+    user_id:
+      type: string
+    pre_frames:
+      type: string
+    platform:
+      type: string
+    is_picture:
+      type: string
+    project_id:
+      type: string
+    channel:
+      type: string
+    tiles_type:
+      type: string
+    tiles:
+      type: string
+    project_name:
+      type: string
+    distributerendernode:
+      type: string
+    framespertask:
+      type: string
+    stopaftertest:
+      type: string
+    inputprojectpath:
+      type: string
+    task_id:
+      type: string
+    taskstoptime:
+      type: string
+    time_out:
+      type: string
+  scene_info_render:
+    type: dict
+    common:
+      type: dict
+      outputfiletype:
+        type: string
+      all_camera:
+        type: string
+      global_proxy:
+        type: string
+      outputfilebasename:
+        type: string
+      element_list:
+        type: string
+      rendsavefile:
+        type: string
+      element_active:
+        type: string
+      in_gamma:
+        type: string
+      height:
+        type: string
+      output_file:
+        type: string
+      rend_timeType:
+        type: string
+      element_type:
+        type: string
+      animation_range:
+        type: string
+      frames:
+        type: string
+      renderable_camera:
+        type: string
+      gamma_val:
+        type: string
+      out_gamma:
+        type: string
+      width:
+        type: string
+      gamma:
+        type: string
+      cgv:
+        type: string
+    renderer:
+      type: dict
+      channel_file:
+        type: string
+      displacement:
+        type: string
+      rawimgname:
+        type: string
+      subdivs:
+        type: string
+      renderer:
+        type: string
+      secbounce:
+        type: string
+      gi:
+        type: string
+      lightcachefile:
+        type: string
+      irrmap_file:
+        type: string
+      filter_kernel:
+        type: string
+      rendrawimg_name:
+        type: string
+      gi_height:
+        type: string
+      filter_on:
+        type: string
+      gi_width:
+        type: string
+      gi_frames:
+        type: string
+      savesepchannel:
+        type: string
+      lightcachemode:
+        type: string
+      primarygiengine:
+        type: string
+      renderer_orign:
+        type: string
+      imagesamplertype:
+        type: string
+      irradiancemapmode:
+        type: string
+      secondarygiengine:
+        type: string
+      name:
+        type: string
+      vfb:
+        type: string
+      onlyphoton:
+        type: string
+      reflection_refraction:
+        type: string
+      mem_limit:
+        type: string
+      default_geometry:
+        type: string

@@ -60,3 +60,5 @@ class ApiUrl(str, Enum):
     setOverTimeStop = "/api/render/task/setOverTimeStop"
     loadingFrameThumbnail = '/api/render/task/loadingFrameThumbnail'
     fullSpeed = '/api/render/task/fullSpeed'
+    taskJsonFile = '/api/render/task/taskJsonFile'
+
