@@ -160,7 +160,14 @@ class RayvisionAPI(object):
         """Submit a task.
 
         Args:
-            task_info (dict): Task id.
+            submit_type (str): The type of the submit job.
+                .e.g:
+                    maya
+                    houdini
+                    clarisse
+            task_info (dict): The information about the job of render.
+            only_id (bool): Whether to return only jobID, otherwise it will
+                return the detailed information of the submitted job.
 
         """
         if submit_type not in ("maya", "houdini", "houdini"):

@@ -180,48 +180,95 @@ updateTaskUserLevel:
     type: integer
 
 maya:
-  software_config:
+  software_config: &software_config
     type: dict
+    required: True
     allowed:
       - cg_name
       - cg_version
       - plugins
+    schema:
+      cg_name:
+        type: string
+      cg_version:
+        type: string
+      plugins:
+        type: dict
   task_info:
     type: dict
-    allowed:
-      - is_layer_rendering
-      - cg_id
-      - ram
-      - os_name
-      - render_layer_type
-      - is_distribute_render
-      - input_cg_file
-      - job_stop_time
-      - user_id
-      - pre_frames
-      - platform
-      - is_picture
-      - project_id
-      - channel
-      - tiles_type
-      - tiles
-      - project_name
-      - distributerendernode
-      - framespertask
-      - stopaftertest
-      - inputprojectpath
-      - task_id
-      - taskstoptime
-      - time_out
+    required: True
+    valueschema:
+      type: string
+      schema:
+        is_layer_rendering:
+          type: string
+          required: True
+        cg_id:
+          type: string
+          required: True
+        ram:
+          type: string
+          required: True
+        os_name:
+          type: string
+          required: True
+        render_layer_type:
+          type: string
+          required: True
+        is_distribute_render:
+          type: string
+          required: True
+        input_cg_file:
+          type: string
+          required: True
+        job_stop_time:
+          type: string
+        user_id:
+          type: string
+        pre_frames:
+          type: string
+        platform:
+          type: string
+        is_picture:
+          type: string
+        project_id:
+          type: string
+        channel:
+          type: string
+        tiles_type:
+          type: string
+        tiles:
+          type: string
+        project_name:
+          type: string
+        distributerendernode:
+          type: string
+        framespertask:
+          type: string
+        stopaftertest:
+          type: string
+        inputprojectpath:
+          type: string
+        task_id:
+          type: string
+        taskstoptime:
+          type: string
+        time_out:
+          type: string
   scene_info_render:
     type: dict
-    schema:
-      layer:
-        required: true
-        type: dict
-        schema:
-          common:
-            type: dict
+    required: True
+    keyschema:
+      type: string
+      regex: "[a-zA-Z0-9_-]+"
+    valueschema:
+      type: dict
+      required: True
+      schema:
+        common:
+          type: dict
+          required: True
+          schema:
             image_format:
               type: string
             end:
@@ -231,9 +278,9 @@ maya:
             imagefileprefix:
               type: string
             all_camera:
-              type: string
+              type: list
             render_camera:
-              type: string
+              type: list
             start:
               type: string
             animation:
@@ -248,16 +295,8 @@ maya:
               type: string
             by_frame:
               type: string
-
 houdini:
-  software_config:
-    type: dict
-    cg_name:
-      type: string
-    cg_version:
-      type: string
-    plugins:
-      type: dict
+  software_config: *software_config
   task_info:
     type: dict
     is_layer_rendering:
@@ -320,7 +359,6 @@ houdini:
         type: string
       render:
         type: string
-
     geo_node:
       type: dict
       node:
@@ -333,14 +371,7 @@ houdini:
         type: string
 
 clarisse:
-  software_config:
-    type: dict
-    cg_name:
-      type: string
-    cg_version:
-      type: string
-    plugins:
-      type: string
+  software_config: *software_config
   task_info:
     type: dict
     is_layer_rendering:
