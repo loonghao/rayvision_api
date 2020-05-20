@@ -1,16 +1,14 @@
 """The operations of the rayvision_api."""
 
-from rayvision_api.operators.env import RenderEnv
-from rayvision_api.operators.query import Query
-from rayvision_api.operators.tag import Tag
-from rayvision_api.operators.task import Task
-from rayvision_api.operators.user import User
+from rayvision_api.operators.render_config import RenderConfig
+from rayvision_api.operators.project_settings import ProjectSettings
+from rayvision_api.operators.render_jobs import RenderJobs
+from rayvision_api.operators.user_profile import UserProfile
 
 # All public api.
 __all__ = (
-    'RenderEnv',
-    'Query',
-    'Tag',
-    'Task',
-    'User'
+    'RenderConfig',
+    'ProjectSettings',
+    'RenderJobs',
+    'UserProfile'
 )

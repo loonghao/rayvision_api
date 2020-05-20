@@ -1,47 +1,91 @@
-rayvision_api
+rayvision-api
 =============
-
-[![](https://img.shields.io/badge/pypi%20package-1.1.1-green)](https://pypi.org/project/rayvision-api/)
-[![](https://img.shields.io/badge/docs--%E4%B8%AD%E6%96%87%E7%AE%80%E4%BD%93-latest-green)](https://renderbus.readthedocs.io/zh/latest)
 [![](https://img.shields.io/badge/docs--English-latest-green)](https://renderbus.readthedocs.io/en/latest)
 [![](https://img.shields.io/badge/license-Apache%202-blue)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 ![](https://img.shields.io/badge/python-2.7.10+%20%7C%203.6%20%7C%203.7-blue)
 ![](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)
+[![CodeFactor](https://www.codefactor.io/repository/github/loonghao/rayvision_api/badge)](https://www.codefactor.io/repository/github/loonghao/rayvision_api)
 
 A Python-based API for Using Renderbus cloud rendering service.
 
-#### 1. 系统要求
+-------------------------------------------------------------------------------
+**This is a refactored branch based on the official version.**
 
-​        rayvision_api 可在 Linux和 Windows 上运行。使用python2.7.10+或者python3.6+
+**Request speed is three times faster than the official version.**
 
-#### 2.使用demo
+**Query speed is 40 times faster than the official version.**
 
+Changes
+--------
+- Follow the [Semantic Versioning](https://semver.org/) standard.
+- Support use session of request.
+- API key and API access id can be overloaded using environment variables `RAYVISION_API_KEY` and `RAYVISION_API_ACCESS_ID`.
+- Code decoupling.
+- Remove unnecessary code.
+- Improve namespace and function naming.
+- Add scheme to verify data type for `POST`.
+
+# Examples:
+Ues the api in the context.
 ```python
+
 from rayvision_api import RayvisionAPI
 
-user_info = {
-    "domain_name": "task.renderbus.com",
-    "platform": "2",
+api_access_id = "xxxxxx"
+api_access_key = "xxxxx"
+
+with RayvisionAPI(access_id=api_access_id, 
+                  access_key=api_access_key) as ray:
+    # Print current user profiles.
+    print(ray.user_profile)
+    # Access profile settings or info like a object.
+    print(ray.user_profile.user_name)
+    print(ray.user_profile.email)
+    print(ray.user_profile.user_id)
+
+```
+Add custom request hooks for the api.
+```python
+
+
+from rayvision_api import RayvisionAPI
+
+def print_resp_url(resp, *args, **kwargs):
+    print(resp.url)
+
+
+def check_for_errors(resp, *args, **kwargs):
+    resp.raise_for_status()
+
+# https://alexwlchan.net/2017/10/requests-hooks/
+hooks = {'response': [print_resp_url, check_for_errors]}
+options = {
+    "render_platform": "6",
     "access_id": "xxxx",
     "access_key": "xxxx",
-    "local_os": 'windows',
-    "workspace": "c:/workspace",
+    "hooks": hooks
 }
 
-api = RayvisionAPI(access_id=user_info['access_id'],
-                   access_key=user_info['access_key'],
-                   domain=user_info['domain_name'],
-                   platform=user_info['platform'])
+ray = RayvisionAPI(**options)
+# Print current user profiles.
+print(ray.user_profile)
+```
+Old school.
+```python
 
-print("======= user profile=============")
-user_profile = api.user.query_user_profile()
-print(user_profile)
+from rayvision_api import RayvisionAPI
+api_access_id = "xxxxxx"
+api_access_key = "xxxxx"
+ray = RayvisionAPI(access_id=api_access_id, access_key=api_access_key)
+# Print current user profiles.
+print(ray.user_profile)
+# Access profile settings or info like a object.
+print(ray.user_profile.user_name)
+print(ray.user_profile.email)
+print(ray.user_profile.user_id)
 
-print("======= user setting=============")
-user_setting = api.user.query_user_setting()
-print(user_setting)
 ```
 
-#### 3. 更多
+# Documentation
 
-详细的使用请参考[RenderBus SDK 显示说明书]( https://renderbus.readthedocs.io/zh/latest/index.html  "SDK详细说明书")
+- [Official documents]( https://renderbus.readthedocs.io/en/latest/index.html)
